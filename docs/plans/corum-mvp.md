@@ -1044,6 +1044,126 @@ consumes the attempt and cannot rerun this candidate/panel/ledger/holdout combin
 
 ---
 
+## Task 6E: Prospective full-coverage convergence/resolution gate
+
+**Entry condition:** Task 6D remains formally `BLOCKED`; its one panel smoke is consumed
+and its formal attempt 0 is unconsumed. The owner approved this distinct prospective
+synthetic qualification under `docs/sdd/0010-convergence-resolution-gate.md` before any
+replacement acquisition SDD may be prepared. It does not reopen Tasks 6A--6D, change the
+accepted-base core, admit a component, or satisfy Task 7's entry condition.
+
+**Documentation files:**
+
+- Modify: `AGENTS.md`
+- Modify: `docs/specs/corum-mvp-design.md`
+- Modify: `docs/plans/corum-mvp.md`
+- Create: `docs/sdd/0010-convergence-resolution-gate.md`
+
+**Frozen judge files:**
+
+- Create later: `configs/convergence-resolution-v1.json`
+- Create later: `tests/test_convergence_resolution_value.py`
+
+**Attempt-0 result files:**
+
+- Judge exclusively creates/appends during the one-shot run:
+  `docs/results/task-6e-convergence-resolution-attempt-0.txt`
+- Result recorder exclusively owns, creating or exact-byte-reusing after judge termination:
+  `docs/results/task-6e-convergence-resolution-attempt-0.json`
+- Result recorder also owns, creating or exact-byte-reusing after judge termination:
+  `docs/results/task-6e-convergence-resolution-attempt-0.md`
+- Modify only registered status/result prose in the four documentation files above
+
+**Step 1: Register and review the synthetic qualification**
+
+Freeze exactly the already registered Task 6D full-coverage readout over the accepted-base
+legacy no-pair power fusion, six literal scenarios, 40 blocks per scenario, 8,000
+independent fit cases and 10,000 holdout cases per block, independent enumerated seeds,
+one accepted-base `simulate_experiment` call per block with pinned child-phase association,
+the synthetic conditional action-dispersion/resolution stress operand, both voting
+baselines, all-case metrics, whole-block paired bootstrap, canonical config/result bytes,
+durable attempt lifecycle, anti-`DEFER` rules, verdict precedence, and one-shot stop rule.
+Preserve every prior failure and Task 6D's `BLOCKED` state. Obtain independent
+statistics, governance, and implementation review and commit exactly
+`docs: register convergence resolution gate`. Do not create a config, judge, result
+placeholder, or production file in this milestone.
+
+**Step 2: Lock the independent synthetic judge through TDD**
+
+In a separate reviewed milestone, add only the frozen JSON config and self-contained
+judge. Synthetic unit fixtures must RED then GREEN schema/literal validation, seed
+regeneration, literal NUL seed separators, tiny non-formal fixture phase splitting and
+hashes, fit/test isolation, existing singleton calibration/dependence/fusion, all-invalid
+`p=0.5` and mixed-invalid diagnostics, both baseline hand calculations, no test-truth
+access in weights, row-order invariance, exact three-row rotation, multiset/truth
+preservation, `DEFER`-as-wrong and probability metrics, whole-block bootstrap, mocked
+fsynced-START then counted sequential 240-block orchestration, sufficient-statistic operand
+hashes and pooled ECE, durable TXT-only judge lifecycle, recorder crash classes, every
+closed reason/verdict class, exact PASS/FAIL/INCONCLUSIVE integrity/output fixtures,
+deterministic replay, resumable recorder fault injection after JSON, Markdown, each status
+update, and around commit, exact-byte reuse and mismatch refusal, canonical output, and
+default external skip. Formal preflight is static and must never simulate a formal block
+or rerun fixtures.
+Pin the literal phase objects and
+their canonical-JSON SHA-256 rather than deriving them from `builtin_scenarios()`;
+enumerate all simulation, fusion, and perturbation seeds and bind the complete seed-table
+digest. Keep `src/corum` frozen and commit exactly
+`test: lock convergence resolution gate` without running the formal gate.
+
+**Step 3: Execute once and obey the result**
+
+Complete retryable preflight before creating any result file. The judge then exclusively
+creates and fsyncs the registered TXT ledger's binding `START` record before the first
+formal block. Existing TXT state refuses execution; post-`START` crash, partial work, or
+integrity failure consumes the attempt as `INVALID`, and a `START`-only ledger is preserved.
+Run all 240 blocks sequentially with no block drop, replacement, top-up, or rerun. Every
+one of the 2,400,000 A-form holdout cases is scored; `DEFER` is incorrect and uncovered.
+The judge embeds canonical deterministic JSON in TXT FINAL, appends/fsyncs exactly one
+FINAL on normal or caught completion, and prints one final aggregate status line with no
+partial metrics. It never creates registered JSON. After termination the recorder creates
+JSON/MD/status from valid FINAL or a closed administrative crash result from preserved
+START-only/partial/malformed TXT, without appending or rerunning. Publication is
+resumable/idempotent: exact existing JSON/MD/status bytes are reused, missing stages are
+completed, mismatches stop as preserved forensic conflicts, and a retry after any stage
+converges to the same registered bytes and one result commit without touching TXT or
+consuming a new attempt. Normal PASS/FAIL/INCONCLUSIVE results use integrity status
+`PASS`, empty integrity reasons, deterministic replay `true`, and complete non-null
+registered counts/maps/hashes.
+
+Formal `PASS` requires, against both voting baselines, at least `+5pp` pooled accuracy with
+positive paired confidence, candidate coverage at least `98%` and within one point of
+each baseline, at least 30% lower synthetic conditional action-dispersion operand with
+positive paired confidence, bounded false-safe incidence, every scenario guardrail, exact
+shared A/B reviewer-row counts, zero model calls, all 240 blocks and 2.4M cases, and
+deterministic integrity. A zero comparator dispersion-operand rate or
+unmet confidence condition after all point checks yields `INCONCLUSIVE`; point or
+guardrail failure yields `FAIL`; integrity failure yields `INVALID`.
+
+A synthetic `PASS` authorizes only preparation and independent review of a new acquisition
+SDD/version that fixes the serialization contract and re-establishes panel eligibility
+before the still-frozen 500-case Daily Use Gate. It is not a Daily Use pass and does not
+consume Task 6D attempt 0. `FAIL`, `INCONCLUSIVE`, or post-start `INVALID` ends the current
+consensus path: do not add another synthetic candidate, shrinkage, pair averaging, model
+averaging, threshold, model call, product surface, or Task 7 work; report root-cause slices
+and return the continue/stop decision to the owner.
+
+Task 6E is only a cheap synthetic kill/prequalification test against voting, not
+state-of-practice or novelty proof. If and only if it passes, the replacement real-data
+acquisition SDD must prospectively add human-labeled repository/code-review truth,
+cross-vendor reviewer strata, and at least the strongest single judge, Dawid--Skene-class
+EM aggregation, and registered conformal risk-control/cascade comparators. It must not use
+synthetic dispersion as real stability evidence. Node-level provenance and active
+experiment design remain future hypotheses, not authorized components.
+
+After the consumed run, the result recorder derives registered JSON, Markdown, and status
+prose from TXT without recomputing or reinterpreting a valid FINAL, then commits
+only those registered artifacts and status prose exactly as
+`docs: record convergence resolution gate result`. TDD injects publication faults after
+JSON, Markdown, every status-document update, and around commit, and proves exact-byte
+reuse, mismatch refusal, and convergence to one result commit.
+
+---
+
 ## Task 7: Leakage-free adaptive cascade
 
 **Entry condition:** both locked Task 6B gates pass. The favorable portions of the failed

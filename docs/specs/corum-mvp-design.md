@@ -68,6 +68,9 @@ The MVP must:
     JudgeBench votes against ordinary and lineage-balanced majority.
 12. Provide a public-data adapter and a reproducible Kaggle notebook path for HaluEval
     only after the applicable zero-cost gates permit that work.
+13. Before preparing any replacement acquisition SDD after the blocked Task 6D smoke,
+    qualify exactly its already registered full-coverage mean-posterior readout on a
+    prospective, large-sample, zero-network synthetic gate without admitting a component.
 
 ## 4. Non-goals
 
@@ -339,6 +342,58 @@ evidence, not a panel pass or model-quality estimate. It caused no model selecti
 and did not create a candidate set, reviewer ledger, harness oracle, or formal Task 6D
 attempt.
 
+#### 8.2.2 Prospective convergence/resolution qualification
+
+Task 6D remains `BLOCKED`; its smoke is final and its formal attempt remains unconsumed.
+The owner approved Task 6E as one distinct, prospective synthetic qualification before
+Corum may prepare any replacement acquisition SDD. It evaluates exactly the registered
+Task 6D experimental readout over the accepted-base legacy no-pair power fusion. It adds
+no component, changes no production action policy, makes no model call, and cannot repair,
+rerun, overwrite, or substitute for any Task 6A--6D result.
+
+The frozen holdout has six literal scenarios, 40 whole replicate blocks per scenario,
+8,000 independent fit cases and 10,000 test cases per block: 240 blocks and 2,400,000 test
+cases in total. The candidate fits existing singleton calibration and dependence on fit
+rows only, uses an empty pair registry and existing posterior draws, and maps their mean
+to `PASS` or `FAIL` only with at least two valid directional observations. Exact mean
+`0.5` and insufficient directional evidence yield `DEFER`; neither interval bounds nor
+the production `DecisionPolicy` participate. There is no selected parameter, threshold,
+or policy-selection split. Each block invokes accepted-base `simulate_experiment` exactly
+once with 8,000 calibration and 10,000 test cases. Its enumerated simulation seed enters
+the pinned `SeedSequence(seed).spawn(2)` operation, child 0 supplies fit and child 1
+supplies test; direct or repeated `simulate_panel` calls are forbidden. When every review
+is non-`VALID`, the diagnostic probability is exactly `0.5` and action remains `DEFER`;
+the case remains in all diagnostics.
+
+Ordinary majority and fit-only reliability-weighted voting receive the same rows. Every
+test case is assigned; `DEFER` is incorrect and uncovered. A per-truth, response-row
+rotation supplies a synthetic conditional action-dispersion/resolution stress operand
+while preserving the exact joint reviewer-row multiset. It moves rows between different
+same-truth cases and therefore is neither a same-case transition nor evidence of response
+or prompt-order stability. Even a 30% lead cannot satisfy Task 6D's real stability
+condition. Exact shared-row counts and zero model calls replace an undefined ratio and
+provide no real token evidence. Full scenario literals, seed derivation, bootstrap
+mechanics, integrity checks, metrics, confidence rules, and verdict precedence are frozen
+in `docs/sdd/0010-convergence-resolution-gate.md`.
+
+A synthetic `PASS` requires at least five percentage points pooled accuracy advantage
+against each voting baseline, positive paired accuracy evidence, at least `98%` coverage,
+at least 30% lower conditional action dispersion with positive paired evidence, bounded
+false-safe incidence, per-scenario non-regression, exact shared-row equality, zero model
+calls, and complete deterministic replay. It authorizes
+only preparation and independent review of a new acquisition SDD/version that fixes the
+serialization contract and re-establishes panel eligibility before the still-frozen
+500-case Daily Use Gate. `FAIL`, `INCONCLUSIVE`, or post-start `INVALID` stops the current
+consensus path. No Task 7, product work, model call, or Daily Use claim is authorized.
+
+This is only a cheap synthetic kill/prequalification test against voting, not
+state-of-practice or novelty evidence. If and only if Task 6E passes, the replacement
+real-data SDD must add human-labeled repository/code-review truth, cross-vendor reviewer
+strata, and at minimum the strongest single judge, Dawid--Skene-class EM aggregation, and
+registered conformal risk-control/cascade comparators. Synthetic dispersion cannot stand
+in for real stability; node-level provenance and active experiment design remain
+unapproved future hypotheses.
+
 HaluEval remains the first planned fresh-inference external dataset because its upstream
 repository is public, MIT licensed, human annotated, and directly supports hallucination
 recognition. The MVP uses the QA, dialogue, and summarization tasks. `general` is reserved
@@ -556,7 +611,35 @@ consumes the attempt: later `INVALID`, `FAIL`, and `INCONCLUSIVE` results cannot
 same candidate/panel/ledger/holdout combination and all three keep product expansion
 blocked.
 
-### 9.5 Locked HaluEval outcome
+### 9.5 Prospective convergence/resolution gate
+
+Task 6E has no formal result at this checkpoint. Its judge and config do not yet exist,
+and the documentation milestone must not create placeholders. After independent review,
+a separate TDD milestone may create only `configs/convergence-resolution-v1.json` and
+`tests/test_convergence_resolution_value.py`; the external path remains skipped unless
+`CORUM_RUN_CONVERGENCE_V1=1`.
+
+All retryable static validation occurs before the judge durably creates the registered TXT
+attempt ledger's `START`; preflight never simulates a formal block. `START` is fsynced
+before the exactly-once sequential loop. The judge writes only TXT and embeds the complete
+deterministic result in FINAL. After termination the recorder is the sole publisher of JSON,
+MD, and status. It maps START-only, partial-FINAL, and malformed-FINAL ledgers to closed
+administrative `INVALID` results without appending TXT or rerunning. An existing ledger
+always refuses execution. Recorder publication is resumable and idempotent: an exact
+existing JSON, MD, or status-prose stage is reused, a missing stage is completed, and any
+byte mismatch is preserved as a forensic conflict without touching TXT, changing the
+verdict, or consuming a new attempt. For every normal scientific completion, integrity
+status is `PASS`, integrity reasons are empty, and deterministic replay is `true`
+independently of a PASS, FAIL, or INCONCLUSIVE scientific verdict.
+
+After integrity succeeds, any point or scenario guardrail failure is `FAIL`. If all point
+checks pass but either voting baseline has zero dispersion-operand rate, or any required
+paired confidence condition fails, the verdict is `INCONCLUSIVE`. Only the remaining
+state is `PASS`; an integrity failure is `INVALID`. No block drop, replacement, top-up,
+threshold change, seed repair, or rerun is allowed after `START`. Probability diagnostics
+and diagnostic decision loss can never override the verdict.
+
+### 9.6 Locked HaluEval outcome
 
 The locked HaluEval test returns one of three outcomes:
 

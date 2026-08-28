@@ -107,6 +107,25 @@ accuracy and stability improvements. This owner exception permits only the minim
 registry and independent judge. It does not repair Task 6C, admit a new component, unlock
 Task 7, or authorize product work before a formal `PASS`.
 
+Task 6D remains `BLOCKED`, its panel smoke remains consumed, and its formal attempt 0
+remains unconsumed. On 2026-08-29 the owner approved one narrow, prospective Task 6E
+exception under `docs/sdd/0010-convergence-resolution-gate.md`: a zero-network synthetic
+qualification of exactly the already registered full-coverage Task 6D readout before any
+replacement acquisition SDD may be prepared. Task 6E adds no statistical component,
+modifies no production behavior, and cannot repair or replace Tasks 6A--6D. A synthetic
+`PASS` authorizes only preparation and independent review of a new acquisition SDD/version
+that repairs the serialization contract and re-establishes panel eligibility before the
+still-frozen 500-case Daily Use Gate. Any other verdict stops the current consensus path;
+no Task 7 or product work is authorized.
+
+Task 6E is only a cheap synthetic kill/prequalification test against voting, not
+state-of-practice or novelty proof. If and only if Task 6E passes, the replacement
+acquisition SDD must prospectively add human-labeled repository/code-review truth,
+cross-vendor reviewer strata, and at least the strongest single judge, Dawid--Skene-class
+EM, and registered conformal risk-control/cascade comparators. Synthetic dispersion is
+not real stability. Node-level provenance and active experiment design remain future
+hypotheses, not authorized components.
+
 ## 4. Architecture and ownership
 
 The statistical core is a small typed Python library. Network access, dataset download,
@@ -264,6 +283,7 @@ fresh verification and independent review with no open Critical or Important fin
 | 6B | Pair-block joint-likelihood pivot and fresh value gate | `PAIR_BLOCK_ADMISSION_FAILED`; Gate A failed, Gate B passed |
 | 6C | JudgeBench external vote value gate for the unchanged legacy core | `FAIL`; attempt 0 final, expansion stopped |
 | 6D | Real-patch Daily Use Gate against voting | Panel smoke formally `BLOCKED`; formal attempt unconsumed |
+| 6E | Prospective full-coverage convergence/resolution gate | Prospective documentation registered; synthetic judge not yet implemented or run |
 | 7 | Leakage-free adaptive cascade | Pending; blocked on both Task 6B gates |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
 | 9 | HaluEval adapter and zero-cost Kaggle notebook | Pending |
@@ -334,6 +354,47 @@ quality, stability, or a Task 6D result. No model was selected, replaced, or reo
 candidate generation, the judge, the 3,000-row ledger, and the harness oracle were not
 started; the formal Task 6D attempt remains unconsumed. Do not rerun or repair this smoke
 under the same acquisition protocol.
+
+### Task 6E prospective convergence/resolution gate
+
+Task 6E does not reopen Task 6D. It freezes `src/corum` and evaluates exactly one
+experimental readout over the accepted-base legacy no-pair power fusion on six literal
+synthetic scenarios, 40 replicate blocks per scenario, 8,000 independent fit cases and
+10,000 test cases per block. Pair likelihoods remain empty; the candidate uses existing
+posterior draws and decides from their mean only when at least two valid directional
+observations exist. It never calls the production `DecisionPolicy`, selects no threshold,
+and receives no policy-selection split. Each block makes exactly one accepted-base
+`simulate_experiment` call; the registered simulation seed is split through the pinned
+`SeedSequence(seed).spawn(2)` fit/test association. An all-non-`VALID` row has diagnostic
+probability exactly `0.5` and action `DEFER`; it remains in all-case diagnostics.
+
+All 2,400,000 test cases count. `DEFER` is incorrect and uncovered, and all methods share
+the same response rows. The gate compares against ordinary majority and fit-only
+reliability-weighted voting. It requires at least `+5pp` pooled accuracy against each,
+candidate coverage at least `98%`, at least `30%` lower synthetic conditional
+action-dispersion under the registered same-truth row rotation with paired confidence
+above zero, bounded false-safe incidence, per-scenario non-regression, exact shared-row
+equality, zero model calls, and complete deterministic integrity. This synthetic operand
+is not same-case response or prompt-order stability evidence and cannot satisfy Task 6D's
+real stability or token conditions.
+
+The documentation milestone may change only the four files registered in SDD 0010. A
+later reviewed TDD milestone may add only `configs/convergence-resolution-v1.json` and
+`tests/test_convergence_resolution_value.py`; no config or judge exists yet. Formal
+execution is one-shot. Static preflight never generates a formal block. The judge writes
+only the registered TXT `START`/`FINAL` ledger; FINAL embeds the complete deterministic
+result. After termination the recorder is the sole publisher of JSON/MD/status, including
+closed administrative `INVALID` results for START-only, partial, or malformed FINAL state,
+without appending or rerunning. Publication is resumable: exact existing JSON/MD/status
+bytes are reused, missing stages are completed, and any mismatch is preserved as a
+forensic conflict without touching TXT or changing the verdict. A publication fault
+consumes no new attempt. Normal scientific results always record integrity status `PASS`,
+empty integrity reasons, and deterministic replay `true`, independently of their
+PASS/FAIL/INCONCLUSIVE verdict. Existing ledger state refuses execution, and any
+post-`START` crash, partial run, or integrity failure consumes the attempt. `PASS` permits
+only a new acquisition SDD/version and independent review; every other consumed verdict
+forbids another synthetic candidate on the current consensus path and returns the
+continue/stop decision to the owner.
 
 ## 7. Mandatory development workflow
 
