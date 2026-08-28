@@ -181,10 +181,10 @@ correlated or shifted settings.
 
 The decision layer returns:
 
-- `PASS` only when the lower conditional posterior bound exceeds the pass threshold and all quorum
-  requirements hold;
-- `FAIL` only when the upper conditional posterior bound is below the fail threshold and all quorum
-  requirements hold;
+- `PASS` only when the lower conditional posterior bound is at or above the pass threshold
+  and all quorum requirements hold;
+- `FAIL` only when the upper conditional posterior bound is at or below the fail threshold
+  and all quorum requirements hold;
 - otherwise `DEFER` with explicit reason codes.
 
 Entropy and Jensen-Shannon divergence are diagnostic and routing signals only. They do
