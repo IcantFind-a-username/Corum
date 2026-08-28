@@ -262,18 +262,38 @@ def test_reviewer_cost_rejects_non_finite_values(invalid_cost: float) -> None:
         )
 
 
-def test_reviewer_cost_accepts_finite_real_that_overflows_float_conversion() -> None:
-    cost = Fraction(10**400, 1)
-
-    reviewer = Reviewer(
-        reviewer_id="reviewer-1",
-        vendor="vendor",
-        family="family",
-        lineage="lineage",
-        cost=cost,  # type: ignore[arg-type]
-    )
-
-    assert reviewer.cost == cost
+@pytest.mark.parametrize(
+    ("record_factory", "field"),
+    [
+        (
+            lambda: Reviewer(
+                reviewer_id="reviewer-1",
+                vendor="vendor",
+                family="family",
+                lineage="lineage",
+                cost=Fraction(10**400, 1),  # type: ignore[arg-type]
+            ),
+            "Reviewer.cost",
+        ),
+        (
+            lambda: _posterior(
+                valid_reviewers=10**401,
+                lineage_count=1,
+                effective_sample_size=Fraction(10**400, 1),  # type: ignore[arg-type]
+            ),
+            "FusedPosterior.effective_sample_size",
+        ),
+    ],
+)
+def test_real_values_that_overflow_float_conversion_are_rejected(
+    record_factory: Callable[[], object],
+    field: str,
+) -> None:
+    with pytest.raises(
+        ValueError,
+        match=rf"{field} must be finite and representable as a float",
+    ):
+        record_factory()
 
 
 @pytest.mark.parametrize("field", ["input_tokens", "output_tokens"])
