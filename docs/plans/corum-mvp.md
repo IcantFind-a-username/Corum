@@ -9,10 +9,11 @@ without hiding uncertainty behind majority voting.
 
 **Architecture:** A small typed Python library owns the statistical core. Review records
 remain immutable, calibration learns class-conditional three-way observation
-likelihoods, dependence weights reduce duplicated evidence, posterior sampling propagates
-cold-start uncertainty, and a risk policy emits `PASS`, `FAIL`, or `DEFER`. A simulator,
-baselines, metrics, experiment runner, and HaluEval adapter sit around the core without
-introducing provider or orchestration abstractions.
+likelihoods, and a registered fixed pair-block path learns joint likelihoods without
+double counting. The legacy dependence-weight path remains a frozen baseline, posterior
+sampling propagates cold-start uncertainty, and a risk policy emits `PASS`, `FAIL`, or
+`DEFER`. A simulator, baselines, metrics, experiment runner, and HaluEval adapter sit
+around the core without introducing provider or orchestration abstractions.
 
 **Tech stack:** Python 3.11+, NumPy, SciPy, standard-library `argparse`, pytest, Ruff,
 mypy, Hatchling, GitHub Actions, Markdown, JSON/JSONL, and a Kaggle-compatible Jupyter
@@ -726,7 +727,7 @@ git add src/corum/baselines.py src/corum/metrics.py tests/test_baselines.py test
 git commit -m "feat: add consensus baselines and metrics"
 ```
 
-**Step 5: Run the locked Core Value Gate before Task 7**
+**Step 6: Run the locked Core Value Gate before Task 7**
 
 `tests/test_core_value.py` is an independent vertical judge. It uses the same reviews for
 Corum, ordinary unweighted majority, and naive independent fusion; it may not tune on test
@@ -743,10 +744,115 @@ changing the judge; after that, record `CORE_VALUE_GATE_FAILED` for owner judgme
 
 ---
 
+## Task 6B: Fixed pair-block joint-likelihood pivot
+
+**Entry condition:** Task 6A is permanently recorded as `CORE_VALUE_GATE_FAILED`, and the
+owner has approved the prospective pivot in
+`docs/sdd/0007-pair-block-consensus-pivot.md`. The old judge and failed result remain
+unchanged.
+
+**Documentation files:**
+
+- Modify: `AGENTS.md`
+- Modify: `docs/specs/corum-mvp-design.md`
+- Modify: `docs/plans/corum-mvp.md`
+- Create: `docs/sdd/0007-pair-block-consensus-pivot.md`
+
+**Test-contract files, committed before implementation:**
+
+- Modify: `tests/test_calibration.py`
+- Modify: `tests/test_fusion.py`
+- Create: `tests/test_pair_value.py`
+
+**Implementation files:**
+
+- Modify: `src/corum/__init__.py`
+- Modify: `src/corum/calibration.py`
+- Modify: `src/corum/fusion.py`
+- Modify: `scripts/benchmark_fusion.py`
+
+**Required public interface:**
+
+```python
+PairKey = tuple[str, str]
+
+@dataclass(frozen=True, slots=True)
+class ReviewerPairCalibration:
+    reviewer_ids: PairKey
+    alpha: np.ndarray             # (2, 3, 3)
+    observed_counts: np.ndarray   # (2, 3, 3)
+    prior_strength: float
+    min_paired_per_truth: int = 30
+
+    def mean_likelihoods(self) -> np.ndarray: ...
+    def sample_likelihoods(
+        self, draws: int, rng: np.random.Generator
+    ) -> np.ndarray: ...          # (draws, 2, 3, 3)
+
+def fit_reviewer_pair_calibration(
+    reviewer_ids: PairKey,
+    examples: Sequence[CalibrationExample],
+    *,
+    reviewer_calibrations: Mapping[str, ReviewerCalibration],
+    prior_strength: float = 9.0,
+    min_paired_per_truth: int = 30,
+) -> ReviewerPairCalibration: ...
+
+def fuse_known_pair_likelihoods(
+    observations: Mapping[str, Observation],
+    likelihoods: Mapping[str, np.ndarray],
+    pair_likelihoods: Mapping[PairKey, np.ndarray],
+    *,
+    prior_pass: float,
+) -> float: ...
+```
+
+Append an empty-by-default `pair_likelihood_draws` mapping to `FusionContext`, and append
+an optional `pair_calibrations` keyword to `build_fusion_context`. Pair keys are canonical,
+known, and globally disjoint. A both-valid pair contributes its joint likelihood once; an
+exactly-one-valid pair falls back to the same singleton draw as naive Bayes; remaining
+singletons have exponent one. With no pair mapping, the legacy power path is byte-for-byte
+unchanged. The standalone known-pair oracle with an empty pair mapping is instead naive
+exponent-one singleton fusion. ESS and lineage diagnostics retain their existing reviewer-
+level definitions.
+
+**Step 1: Commit and review the prospective documentation**
+
+Commit exactly `docs: register pair-block consensus pivot`. Do not write production code
+or run the new value judge before this commit.
+
+**Step 2: Write RED unit tests and the independent locked judge**
+
+Cover pair counts/prior/sparsity, hand-worked joint Bayes, no double counting, missing
+fallback, invalid keys, immutable draws, seeded replay, legacy compatibility, and scalar/
+matrix equivalence. Add the complete fresh two-gate judge, literal scenarios, constants,
+and reference calculations from SDD 0007. Run only the focused unit files to capture RED;
+do not execute `tests/test_pair_value.py`. Obtain independent read-only review of the
+complete test diff, fix every Critical or Important finding without executing the judge,
+then commit exactly `test: lock pair-block value gate`.
+
+**Step 3: Implement the minimum pair-block path and verify GREEN**
+
+Do not change the simulator, baselines, metrics, dependence model, decision policy, old
+judge, or any gate literal. Run focused tests, the repository suite excluding both locked
+judges, branch coverage at least 80%, Ruff, mypy, and the registered performance probe.
+Commit exactly `feat: fuse calibrated reviewer pairs` after independent review reports no
+open Critical or Important finding.
+
+**Step 4: Execute the fresh judge once**
+
+Run `uv run pytest tests/test_pair_value.py -q` only after all three commits and reviews.
+Gate A admits the pair component; Gate B closes the core against ordinary majority. Both
+must pass to unlock Task 7. After the first run, permit at most two bounded repairs only in
+pair calibration/fusion production code plus additive or stronger regression tests; never
+delete or relax an existing assertion, and never alter the judge in place.
+
+---
+
 ## Task 7: Leakage-free adaptive cascade
 
-**Entry condition:** the locked Core Value Gate passes. A green unit suite without that
-value result is insufficient.
+**Entry condition:** both locked Task 6B gates pass. The favorable portions of the failed
+Task 6A run and a green unit suite are insufficient.
 
 **Files:**
 

@@ -55,7 +55,7 @@ The MVP must:
    using Dirichlet posteriors.
 3. Propagate calibration uncertainty instead of treating posterior means as exact.
 4. Reduce duplicate evidence from correlated reviewers without double-counting
-   reliability.
+   reliability, including a registered joint-likelihood path for fixed reviewer pairs.
 5. Produce `PASS`, `FAIL`, or `DEFER` actions using conservative probability thresholds,
    conditional posterior intervals, quorum, and effective sample size.
 6. Preserve invalid, timeout, refusal, and not-called states rather than deleting them.
@@ -103,9 +103,11 @@ The package is split into focused units:
 
 - `models.py`: immutable enums and records for cases, reviews, reviewers, calibration,
   fused scores, decisions, and costs.
-- `calibration.py`: Dirichlet count fitting and posterior sampling for `P(O | Y)`.
+- `calibration.py`: Dirichlet count fitting and posterior sampling for singleton
+  `P(O | Y)` and registered pair-block `P(O_i, O_j | Y)` likelihoods.
 - `dependence.py`: error-correlation estimation and design-effect reviewer weights.
-- `fusion.py`: log-likelihood fusion over posterior samples.
+- `fusion.py`: legacy power-likelihood fusion and optional fixed pair-block fusion over
+  posterior samples.
 - `decision.py`: quorum checks and conditional-posterior action policy.
 - `cascade.py`: leakage-free reviewer ordering, sequential acquisition, and early stop.
 - `simulation.py`: controlled panel generator with common lineage shocks and missingness.
@@ -155,6 +157,17 @@ The MVP supports a conservative pooled parent prior. The prior contributes only 
 explicit pseudo-count and its share is reported. Fusion samples full `theta` draws; it
 does not plug in only the posterior mean.
 
+For a predeclared reviewer pair and each true class, the ordered output pair is one
+nine-cell categorical variable. Its `3 x 3` likelihood has a Dirichlet posterior fitted
+only from cases where both reviews are `VALID` for the same case and truth. `ABSTAIN` is a
+normal third observation category. The joint prior is centered on the outer product of
+the two inferred singleton parent priors, not on reviewer-specific posterior means that
+would directly add their observed counts again. This is a plug-in empirical-Bayes center:
+the pooled parent can indirectly contain the same fit cases, and its uncertainty is not
+propagated. The update assumes cases are conditionally exchangeable with a stable joint
+cell vector inside each truth/both-valid row. Both truth rows must meet the registered
+paired-valid minimum before a pair can be activated.
+
 ### 7.2 Dependence adjustment
 
 Reliability is already represented by the likelihood matrix and must not be multiplied
@@ -170,23 +183,58 @@ reviewers is present, its total contribution approaches one independent review. 
 lineage-level cap provides a conservative fallback when paired calibration data is too
 sparse.
 
+The power-likelihood adjustment is retained as a frozen baseline after its first locked
+value gate failed one registered dependence stress threshold. The prospective pivot uses
+joint likelihoods only for a fixed, globally disjoint pair partition declared without test
+access. For blocks assumed conditionally independent given truth:
+
+`P(observations | Y) = product_B P(observations_B | Y)`.
+
+A fully observed pair contributes exactly one joint factor, conditional on both members
+being valid, and never its two singleton factors as well. A pair with only one valid member
+uses an explicit baseline-compatible approximation: that member's separately calibrated
+singleton factor, not a marginal of the sampled joint table. This approximation assumes
+the validity/missingness process is ignorable for that fallback; an absent member
+contributes no evidence. Remaining singleton blocks use exponent one. Dependence estimates
+still provide ESS and diagnostics, but do not temper a joint block a second time.
+
+This block factorization is an explicit modeling assumption, not a proof that all
+cross-block dependence is absent. Corum therefore forbids overlapping pairs in this path
+and measures held-out NLL, Brier score, decision loss, and negative controls before the
+component is admitted. The use of a low-dimensional pair likelihood is informed by the
+scope and cautions of
+[Cox and Reid (2004)](https://doi.org/10.1093/biomet/91.3.729), but exact block
+factorization here depends on Corum's explicit conditional-independence assumption rather
+than that paper's composite-likelihood results. The conditional-product
+interpretation follows
+[Dawid and Studeny (1999)](https://proceedings.mlr.press/r2/dawid99a.html);
+the nine-cell count model uses the Dirichlet--compound-multinomial construction associated
+with [Mosimann (1962)](https://doi.org/10.1093/biomet/49.1-2.65). These sources motivate
+the model; they do not establish that Corum beats a voting baseline.
+
 ### 7.3 Fusion and action
 
-For each posterior sample, Corum combines the class prior and each valid observation's
-class-conditional likelihood in log space, exponentiated only by the subset-conditioned
-dependence weight. It returns the mean probability of `PASS`, a central
+For each posterior sample, legacy Corum combines the class prior and each valid
+observation's class-conditional likelihood in log space, exponentiated only by the
+subset-conditioned dependence weight. The registered pair-block path instead combines
+the fixed disjoint joint/singleton factors defined above. Both return the mean probability
+of `PASS`, a central
 posterior-sampling interval, reviewer count, lineage count, and correlation-adjusted ESS.
 An exact known-likelihood path exists for analytic verification; production fusion samples
 calibration likelihoods once per experiment context and reuses those parameter draws
 across cases.
+The exact pair oracle with an empty pair map is the exponent-one naive singleton oracle;
+an empty pair map in a sampled `FusionContext` retains the legacy power path for backward
+compatibility.
 
-The interval propagates Dirichlet calibration uncertainty conditional on the
-point-estimated dependence adjustment. It is not a full joint credible interval for
-correlated reviewer outputs because the MVP does not model uncertainty in the correlation
-matrix or the complete class-conditional joint observation distribution. Risk thresholds
-are therefore conservative action policy inputs whose empirical performance is measured
-on held-out policy and test splits; they are not advertised as a formal risk guarantee in
-correlated or shifted settings.
+The interval propagates Dirichlet calibration uncertainty conditional on the selected
+legacy dependence adjustment or fixed pair partition. Even in pair-block mode it is not a
+full-panel joint credible interval: the MVP does not propagate partition-selection
+uncertainty, pooled-parent uncertainty, clustered or repeated-case dependence, unmodeled
+case-difficulty mixtures, cross-block dependence uncertainty, or higher-order
+interactions. Risk thresholds are therefore conservative action policy inputs whose
+empirical performance is measured on held-out policy and test splits; they are not
+advertised as a formal risk guarantee in correlated or shifted settings.
 
 The decision layer returns:
 
@@ -348,6 +396,33 @@ are locked before the first result. Passing is synthetic evidence that the core 
 external validation, not proof that it already helps developers. Failure blocks Task 7;
 the judge is independent of the implementation and the owner keeps the final pivot/stop
 decision.
+
+The first frozen run and its one permitted general shrinkage repair did not pass this
+gate. The repaired core had pooled decision loss `0.03962` versus majority `0.06664`, but
+its `majority_trap` probability-quality improvement was only `3.5293%`, below the locked
+`5%` threshold. The result is permanently recorded as `CORE_VALUE_GATE_FAILED`; the
+favorable pooled metrics do not override the failed mechanism test. On 2026-08-28 the
+owner approved a prospective pair-block pivot, not a retrospective judge change.
+
+### 9.2 Pair-block pivot gates
+
+Task 6B uses fresh seeds, four-reviewer scenarios, two fit sizes, a same-lineage
+independent negative control, and a missing-pair-member slice. Its literals, judge,
+baselines, splits, thresholds, and stop rule are locked in
+`docs/sdd/0007-pair-block-consensus-pivot.md` before the first execution.
+
+Gate A admits the component only if pair-block fusion improves held-out NLL over both
+naive independent fusion and the frozen power heuristic in the correlated pool, remains
+safe in the low-sample and independent controls, and exactly preserves singleton fallback
+when only one pair member is present. Gate B additionally requires at least 10% lower
+pooled decision loss than ordinary majority with paired uncertainty excluding zero
+benefit, no worse pooled loss than both probability baselines, at least 50% coverage,
+bounded false-PASS risk, and no registered slice regression. Both gates must pass before
+Task 7 can begin. A Gate A failure rejects the component; a Gate B failure may leave an
+experimental component but keeps downstream work blocked. At most two bounded repairs to
+pair calibration or fusion are allowed after the first frozen run.
+
+### 9.3 Locked HaluEval outcome
 
 The locked HaluEval test returns one of three outcomes:
 

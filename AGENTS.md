@@ -77,17 +77,19 @@ only when it serves a pre-registered user outcome and has a cheaper existing-pra
 baseline or ablation to beat. Infrastructure such as simulation is allowed only as the
 minimum machinery for the next locked comparison; it is not user value by itself.
 
-Before Task 7 or any product-surface expansion, the full-static Corum core must pass the
-locked Core Value Gate after Task 6 against ordinary unweighted majority voting. The gate
-also compares dependence-aware fusion with naive independent fusion. Builders may not
-change scenarios, loss weights, thresholds, test seeds, coverage requirements, or the
-baseline after seeing gate results. Synthetic success permits external validation; it
-does not prove real-world usefulness.
+Task 6A registered the first full-static Core Value Gate against ordinary unweighted
+majority and naive independent fusion. Its scenarios, losses, thresholds, seeds, coverage
+requirements, baselines, and maximum three-repair rule froze before execution. Synthetic
+success would have permitted external validation, not proved real-world usefulness.
 
-If the gate fails, stop new-component work. Permit at most three bounded repair iterations
-within the existing core, each with a regression and the unchanged independent judge. If
-it still fails, record `CORE_VALUE_GATE_FAILED` and return the pivot/stop decision to the
-project owner.
+The first Task 6A judge remained failed after one general shrinkage repair: Corum beat
+ordinary majority on pooled decision loss, but the power-likelihood dependence heuristic
+missed its registered `majority_trap` probability-improvement threshold. The owner chose
+a prospective core pivot on 2026-08-28. Task 6B may therefore add only the pre-registered
+pair-block likelihood path in `docs/sdd/0007-pair-block-consensus-pivot.md`; it must retain
+the old failed result and beat naive independence, the frozen power heuristic, and
+ordinary majority on a fresh locked evaluation. Task 7 and product surfaces remain
+blocked until both Task 6B gates pass.
 
 ## 4. Architecture and ownership
 
@@ -97,9 +99,9 @@ and model inference stay outside the core.
 | Unit | Sole responsibility |
 |---|---|
 | `models.py` | Immutable enums and domain records |
-| `calibration.py` | Dirichlet fitting and sampling for reviewer likelihoods |
+| `calibration.py` | Dirichlet fitting and sampling for singleton and fixed pair-block likelihoods |
 | `dependence.py` | Error dependence, lineage fallback, subset weights, and ESS |
-| `fusion.py` | Log-space posterior fusion over shared likelihood draws |
+| `fusion.py` | Legacy power fusion and optional pair-block joint fusion over shared draws |
 | `decision.py` | Hard-gate precedence, quorum, and risk-aware action policy |
 | `simulation.py` | Reproducible correlated panels, drift, and missingness |
 | `baselines.py` | Leakage-free comparison methods |
@@ -151,6 +153,12 @@ cases/reviews -> schema validation + hard gates -> calibration -> dependence
 - Cold-start reviewers shrink toward the pooled parent and retain wider uncertainty than
   large-sample reviewers at the same empirical rate.
 - Fusion uses Dirichlet draws, not only posterior means.
+- A registered reviewer pair treats its ordered two-reviewer observation as one of nine
+  categorical cells per truth row. Its joint prior is centered on the product of the two
+  inferred singleton parent priors as a plug-in empirical-Bayes center; paired counts
+  require both reviews to be `VALID` for the same case and truth.
+- Pair keys are canonical, globally disjoint, declared before test access, and rejected
+  when either truth row lacks the registered minimum paired-valid calibration count.
 
 ### 5.3 Dependence
 
@@ -172,20 +180,35 @@ cases/reviews -> schema validation + hard gates -> calibration -> dependence
   overwrite these exact weighting fallbacks.
 - A singleton queried reviewer has weight `1`, regardless of unqueried clones.
 - Empty-subset ESS is `0`; non-empty ESS is finite and bounded in `[1, n]`.
+- The power-likelihood path is retained as a frozen baseline. Pair-block fusion does not
+  multiply its joint likelihood by these dependence weights; the dependence model still
+  supplies unchanged reviewer-equivalent ESS and diagnostics.
 
 ### 5.4 Fusion and decision
 
-- Accumulate weighted class likelihoods in log space with bounded probabilities.
+- Accumulate class likelihoods in log space with bounded probabilities: dependence-
+  weighted singleton factors on the legacy path, or disjoint joint/singleton block factors
+  on the registered pair path.
 - Sample calibration parameters once per `FusionContext` and reuse the same draws across
   cases and across growing cascade subsets.
-- Recompute dependence weights for each case's valid queried subset.
+- Recompute dependence weights for each case's valid queried subset on the legacy path;
+  pair mode retains the same subset ESS for quorum and diagnostics only.
+- With no registered pair draws, fusion remains byte-for-byte identical to the legacy
+  power path. With a fixed pair partition, a fully observed pair contributes exactly one
+  `P(o_i, o_j | truth)` factor and never its two singleton factors as well; remaining
+  singleton blocks contribute with exponent one under the registered block-conditional-
+  independence assumption.
+- If only one member of a registered pair is valid, that review falls back to the same
+  singleton likelihood draw used by naive independent fusion. This is an explicit
+  baseline-compatible approximation under ignorable validity, not marginalization of the
+  joint draw. Missing pair members never create evidence or a dependence penalty.
 - Missing executions contribute nothing. An empty valid panel returns no posterior.
 - The batched path and scalar path must share a tested kernel and agree byte-for-byte for
   a fixed context. In the matrix path, `valid_mask` is the sole authority on whether a
   cell contributes.
-- The posterior interval propagates Dirichlet likelihood uncertainty conditional on a
-  point-estimated dependence adjustment. Never call it a full correlated-output credible
-  interval or a formal risk guarantee.
+- The posterior interval propagates Dirichlet likelihood uncertainty conditional on the
+  point-estimated legacy adjustment or fixed pair partition. Never call it a full-panel
+  correlated-output credible interval or a formal risk guarantee.
 - Decision precedence is fixed:
   1. trusted deterministic `FAIL` gate -> `FAIL`;
   2. trusted `UNRESOLVED` gate prevents `PASS` -> ordinarily `DEFER`;
@@ -219,10 +242,11 @@ fresh verification and independent review with no open Critical or Important fin
 | 2 | Dirichlet reviewer calibration and uncertainty | Complete |
 | 3 | Dependence estimation and duplicate-evidence control | Complete |
 | 4 | Posterior fusion, hard gates, and risk-aware policy | Complete (`9e1c606`) |
-| 5 | Reproducible correlated-panel simulator | Current |
-| 6 | Baselines, metrics, and paired uncertainty | Pending |
-| 6A | Locked core-vs-majority value gate | Pending; blocks Task 7 |
-| 7 | Leakage-free adaptive cascade | Pending |
+| 5 | Reproducible correlated-panel simulator | Complete (`9366053`) |
+| 6 | Baselines, metrics, and paired uncertainty | Complete (`6eba742`) |
+| 6A | Locked core-vs-majority value gate | `CORE_VALUE_GATE_FAILED`; pivot returned to owner |
+| 6B | Pair-block joint-likelihood pivot and fresh value gate | Current; owner approved |
+| 7 | Leakage-free adaptive cascade | Pending; blocked on both Task 6B gates |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
 | 9 | HaluEval adapter and zero-cost Kaggle notebook | Pending |
 | 10 | Open-source release surface and CI quality gates | Pending |
@@ -232,14 +256,15 @@ fresh verification and independent review with no open Critical or Important fin
 The coordinator may update this checkpoint in a repository-level documentation commit.
 Task implementers must not expand their allowed-file list solely to edit status prose.
 
-### Task 5 handoff
+### Task 6B handoff
 
-The next implementation task is exactly Task 5 in the tracked plan and
-`docs/sdd/0005-correlated-panel-simulator.md`. It may modify only `pyproject.toml` to add
-the declared SciPy runtime dependency and create `src/corum/simulation.py` plus
-`tests/test_simulation.py`. Keep UI, repository ingestion, LLM adapters, baselines, and
-reporting out of this task. Task 5 is the zero-cost testbed that must make later claims
-about consensus usefulness measurable.
+The current task is exactly the owner-approved prospective pivot in
+`docs/sdd/0007-pair-block-consensus-pivot.md`. Extend only calibration and fusion
+production behavior with a fixed, disjoint pair-block path; the registered public exports
+and performance harness are the only auxiliary production files. Preserve the legacy path
+as a baseline, and commit the fresh independent judge before its first run. Keep cascade,
+UI, repository ingestion, LLM adapters, and reporting out of this task. A green unit suite
+cannot override either registered Task 6B value gate.
 
 ## 7. Mandatory development workflow
 
