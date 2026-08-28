@@ -477,6 +477,24 @@ No same-data repair is allowed after the one frozen run. A pass is external stat
 answer-comparison evidence, not proof of project understanding, patch correctness,
 developer adoption, production readiness, or universal superiority.
 
+The only frozen attempt ran on 2026-08-29 at Corum commit
+`6d03f4cf18c43decff3ae1bffde277279ff25d31` and returned `FAIL`. On the 154-case
+pooled test, Corum decision loss was `0.253247` versus `0.285714` for both voting
+baselines, an `11.36%` favorable point estimate, but the paired 95% benefit intervals
+were `[-0.025974, 0.092532]` and therefore crossed zero. More importantly, Corum
+covered only `3.90%` of cases and usefully resolved `2.60%`, versus `89.61%` and
+`63.64%` for each baseline. It deferred on 148 of 154 cases; the selected policy also
+missed its policy-partition coverage constraint. The coding slice had one decision in 42
+cases, that decision was wrong, and useful resolution was zero. Integrity and the
+registered point-loss targets passed, but confidence, anti-`DEFER`, policy-coverage,
+and coding-utility gates failed.
+
+The lower loss therefore does not establish accuracy or practical superiority: under the
+frozen symmetric loss, it was purchased almost entirely by abstention. Attempt 0 is final
+for this core and panel. The result blocks new statistical components, the adaptive
+cascade, UI, repository ingestion, LLM adapters, quality scoring, and reporting. It is
+static answer-comparison failure evidence, not project, patch, or adoption validation.
+
 ### 9.4 Locked HaluEval outcome
 
 The locked HaluEval test returns one of three outcomes:

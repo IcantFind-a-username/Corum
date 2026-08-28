@@ -1,6 +1,6 @@
 # SDD: JudgeBench external vote value gate
 
-- Status: approved
+- Status: completed — `FAIL`; attempt 0 final
 - Accepted base: `079ccfc770ed71e398660b31a9179c01c9ee42ce`
 - Exact documentation commit: `docs: register JudgeBench external value gate`
 - Exact judge commit: `test: lock JudgeBench external value gate`
@@ -301,6 +301,30 @@ The first frozen result is final for this core and panel. No same-data repair, t
 change, panel substitution, split change, or algorithm tuning is allowed. Only a proven
 parser or judge defect can invalidate the run, and its fix requires a new SDD version and
 a fresh result path rather than editing attempt 0.
+
+### Attempt-0 result
+
+The formal judge ran exactly once on 2026-08-29 at Corum commit
+`6d03f4cf18c43decff3ae1bffde277279ff25d31` and returned `FAIL`. Integrity and
+both relative point-loss targets passed. On 154 pooled cases, Corum loss was
+`0.2532467532467532` versus `0.2857142857142857` for each voting baseline, a
+`0.032467532467532464` absolute and `11.36%` relative point benefit. The paired 95%
+benefit interval against each baseline was
+`[-0.025974025974025976, 0.09253246753246754]`, so neither confidence check passed.
+
+The utility guardrails decisively failed. Corum produced 148 `DEFER`, 6 `FAIL`, and
+no `PASS`: coverage was `0.03896103896103896` and useful resolution was
+`0.025974025974025976`. Each baseline covered `0.8961038961038961` and usefully
+resolved `0.6363636363636364`. Policy-partition coverage was
+`0.029411764705882353` with `constraint_satisfied=false`. On the 42-case coding
+slice Corum deferred 41 times, made one wrong decision, and had zero useful resolution.
+Thus the lower frozen-loss point estimate was purchased almost entirely by abstention and
+does not prove practical superiority over voting.
+
+Attempt 0 is final for this core and panel. No same-data repair, threshold adjustment, or
+replacement run is authorized. New statistical components and every product surface
+remain blocked. Complete aggregate and execution artifacts are retained at
+`docs/results/task-6c-judgebench-attempt-0.{json,md,txt}`.
 
 ## TDD evidence
 

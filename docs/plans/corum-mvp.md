@@ -934,6 +934,17 @@ state that JudgeBench is static answer-comparison evidence rather than project, 
 adoption validation. Commit exactly `docs: record JudgeBench external gate result` after
 the artifacts and verification evidence are complete.
 
+**Frozen attempt-0 result (2026-08-29):** the judge ran exactly once on
+`6d03f4cf18c43decff3ae1bffde277279ff25d31` and returned `FAIL`. Corum's pooled
+decision loss was `0.253247`, `11.36%` below both voting baselines at `0.285714`,
+but the paired 95% intervals `[-0.025974, 0.092532]` crossed zero. Corum coverage was
+only `3.90%` and useful resolution `2.60%`, versus `89.61%` and `63.64%` for
+each baseline; 148 of 154 cases were `DEFER`. The policy constraint and the registered
+pooled and coding anti-`DEFER`/utility guardrails failed. Preserve the complete aggregate
+result and exact pytest capture under `docs/results/`. This core/panel result is final:
+do not tune it on JudgeBench, and keep Task 7 plus all component and product expansion
+blocked.
+
 ---
 
 ## Task 7: Leakage-free adaptive cascade

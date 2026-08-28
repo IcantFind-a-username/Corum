@@ -251,7 +251,7 @@ fresh verification and independent review with no open Critical or Important fin
 | 6 | Baselines, metrics, and paired uncertainty | Complete (`6eba742`) |
 | 6A | Locked core-vs-majority value gate | `CORE_VALUE_GATE_FAILED`; pivot returned to owner |
 | 6B | Pair-block joint-likelihood pivot and fresh value gate | `PAIR_BLOCK_ADMISSION_FAILED`; Gate A failed, Gate B passed |
-| 6C | JudgeBench external vote value gate for the unchanged legacy core | Approved; judge not yet executed |
+| 6C | JudgeBench external vote value gate for the unchanged legacy core | `FAIL`; attempt 0 final, expansion stopped |
 | 7 | Leakage-free adaptive cascade | Pending; blocked on both Task 6B gates |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
 | 9 | HaluEval adapter and zero-cost Kaggle notebook | Pending |
@@ -277,6 +277,16 @@ pair component and do not repair or tune the legacy core on JudgeBench. Keep the
 UI, repository ingestion, LLM adapters, quality scoring, and reporting blocked during
 Task 6C. A Task 6C pass may unlock only the narrowly scoped next steps named in SDD 0008;
 failure or inconclusive evidence stops component expansion.
+
+Task 6C attempt 0 ran exactly once on `6d03f4cf18c43decff3ae1bffde277279ff25d31`
+and returned `FAIL`. Corum's pooled decision-loss point estimate was `11.36%` below
+both voting baselines, but its paired 95% benefit interval crossed zero and it deferred on
+`96.10%` of cases. Coverage was `3.90%` versus `89.61%`, and useful resolution was
+`2.60%` versus `63.64%`. The anti-`DEFER`, policy-coverage, and coding-utility
+guardrails correctly rejected the apparently favorable loss. This attempt is final for
+the frozen core and panel: no same-data repair or threshold change is permitted, Corum
+has not proved a practically usable advantage over voting, and all component and product
+expansion remains blocked.
 
 ## 7. Mandatory development workflow
 
