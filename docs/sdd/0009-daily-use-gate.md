@@ -1,6 +1,6 @@
 # SDD: Daily Use Gate
 
-- Status: committed — protocol registered; pre-acquisition evidence blocked
+- Status: committed — panel smoke formally `BLOCKED`; formal attempt unconsumed
 - Accepted base: `29dbc129d13f307ac0633510feefb1e0c2b6684b`
 - Exact documentation commit: `docs: register daily use value gate`
 - Exact judge commit: `test: lock daily use value gate`
@@ -442,12 +442,14 @@ so rather than claiming cryptographic proof it does not possess.
 ## TDD evidence and execution order
 
 1. Commit and independently review this prospective documentation before writing the
-   judge or acquiring reviewer outputs.
+   judge or acquiring formal Task 6D benchmark reviewer outputs.
 2. Satisfy the pre-acquisition prerequisites: commit one complete outcome-blind candidate
    commitment, the mechanically selected exact three-model panel, prompt/retrieval/context
    manifests, privacy/provenance clearances, container digests, and the 500-case gold-patch
    environment check. Until these exist, remain `BLOCKED` and do not write a placeholder
-   config or acquire a reviewer output.
+   config or acquire the formal 3,000-row reviewer ledger. The already consumed
+   preregistered synthetic transport/schema smoke is the sole exception; it is closed and
+   authorizes no further call, retry, repair, model replacement, or reordering.
 3. RED: synthetic contract tests must first fail because the registry validator, blind
    join, baselines, metrics, bootstrap, and verdict do not exist.
 4. GREEN: implement only `configs/daily-use-v1.json` and the self-contained independent
@@ -515,8 +517,29 @@ PCG64 sampling, order-only perturbation, pinned oracle classification, a pre-ora
 reviewer-ledger seal, and semantic hash-chain replay protection. All three re-reviews
 returned `APPROVE` with no open Critical or Important finding.
 
-At registration time, external validation and judge implementation remain blocked: there
-is no compliant outcome-blind 500-patch candidate commitment, complete available-model
-inventory, exact three-model panel, privacy/provenance clearance, reviewer/token ledger,
-or harness outcome registry. This status is an honest prerequisite, not an invitation to
-write placeholders, replace real data with simulation, or start product work.
+At the current checkpoint, external validation and judge implementation remain blocked:
+there is no compliant outcome-blind 500-patch candidate commitment, exact eligible
+three-model panel, privacy/provenance clearance, reviewer/token ledger, or harness outcome
+registry. This status is an honest prerequisite, not an invitation to write placeholders,
+replace real data with simulation, or start product work.
+
+## Pre-acquisition panel-smoke outcome
+
+On 2026-08-29 the one preregistered, zero-cost synthetic transport/schema smoke was
+consumed under an external START/FINAL hash-chain audit. The formal outcome is
+`BLOCKED / result_mismatch`; this smoke must not be rerun as v2.1, v2.2, or v3. Its
+immutable runner artifact records exactly three calls, zero retries, zero benchmark cases,
+zero formal reviewer rows, and one `HTTP 200` plus exact enum-schema-valid record for each
+of the three preregistered digests. It persists no observation value, response body/hash,
+token count, or duration diagnostic.
+
+The external validator rejected the runner's internal `PASS` because PowerShell parameter
+binding coerced the `$null` argument passed to `[AllowNull()][string]$FailureKind` into
+`""` before JSON serialization, while the registered result contract required JSON
+`null`. The rejection is correct and is not a parser relaxation opportunity. The `3/3`
+mechanical records prove only that those exact one-time calls crossed the registered
+transport/schema boundary; they prove neither panel eligibility nor model accuracy,
+stability, independence, context capacity, or quality. No model was selected, replaced,
+or reordered from the outcome. Candidate generation, the judge, context packages, the
+3,000-row reviewer ledger, and the harness oracle were not started, so formal Task 6D
+attempt 0 remains unconsumed.

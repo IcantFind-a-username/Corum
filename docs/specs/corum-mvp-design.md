@@ -330,6 +330,15 @@ token, or harness registries leave the gate blocked and cannot be replaced with 
 claims. A pass permits only a new minimal-product plan; it does not retroactively pass
 Task 6C, admit a component, or unlock the old cascade.
 
+The first zero-cost pre-acquisition panel smoke is final and formally
+`BLOCKED / result_mismatch`. Its immutable mechanical ledger has three calls, zero retries,
+and `3/3` HTTP-200, exact enum-schema-valid records, but PowerShell parameter binding
+coerced the `$null` argument passed to `[AllowNull()][string]$FailureKind` into `""` before
+JSON serialization instead of producing JSON `null`. This is useful contract-failure
+evidence, not a panel pass or model-quality estimate. It caused no model selection change
+and did not create a candidate set, reviewer ledger, harness oracle, or formal Task 6D
+attempt.
+
 HaluEval remains the first planned fresh-inference external dataset because its upstream
 repository is public, MIT licensed, human annotated, and directly supports hallucination
 recognition. The MVP uses the QA, dialogue, and summarization tasks. `general` is reserved
@@ -537,13 +546,15 @@ Task 6D returns one of four states:
 - `INVALID`: a frozen-byte, blindness, provenance, schema, finite-value, or deterministic
   replay requirement fails after the formal attempt starts.
 
-No result exists at protocol-registration time. The official experiments metadata pin
-does not contain a usable predictions file, and no compliant 500-patch candidate or
-three-reviewer ledger is frozen. This is `BLOCKED`, not an attempt. Once all prerequisites
-are sealed, the judge runs only once. A pre-oracle byte-transfer failure may be repaired
-only without changing sealed semantics. Opening the oracle consumes the attempt: later
-`INVALID`, `FAIL`, and `INCONCLUSIVE` results cannot rerun the same
-candidate/panel/ledger/holdout combination and all three keep product expansion blocked.
+No formal Task 6D result exists at the current checkpoint. The official experiments
+metadata pin does not contain a usable predictions file, and no compliant 500-patch
+candidate or three-reviewer ledger is frozen. The consumed panel smoke described above
+remains formally `BLOCKED`; it did not consume the Daily Use Gate attempt. Once every
+prerequisite is independently sealed, the judge runs only once. A pre-oracle byte-transfer
+failure may be repaired only without changing sealed semantics. Opening the oracle
+consumes the attempt: later `INVALID`, `FAIL`, and `INCONCLUSIVE` results cannot rerun the
+same candidate/panel/ledger/holdout combination and all three keep product expansion
+blocked.
 
 ### 9.5 Locked HaluEval outcome
 

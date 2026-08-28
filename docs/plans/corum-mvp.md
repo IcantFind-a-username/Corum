@@ -990,8 +990,19 @@ candidate inventory with deterministic selection. Freeze the complete eligible e
 inventory and mechanical three-distinct-lineage model selection, exact prompt/retrieval
 and 1,000 context packages, privacy/provenance clearances, container digests, and a
 successful 500-case gold-patch environment check. Until every item exists, keep Task 6D
-`BLOCKED`; do not write a placeholder config, acquire reviewer output, call a paid API,
-reduce the sample, substitute simulation, or start product work.
+`BLOCKED`; do not write a placeholder config, acquire the formal 3,000-row reviewer
+ledger, call a paid API, reduce the sample, substitute simulation, or start product work.
+The already consumed preregistered synthetic transport/schema smoke is the sole exception;
+it is closed and authorizes no further call, retry, repair, replacement, or reordering.
+
+Checkpoint 2026-08-29: the one preregistered local panel smoke is consumed and formally
+`BLOCKED / result_mismatch`. Its three preregistered digests each produced one HTTP-200,
+exact-schema-valid mechanical record with zero retries, but PowerShell parameter binding
+coerced the `$null` argument passed to `[AllowNull()][string]$FailureKind` into `""` before
+JSON serialization instead of producing JSON `null`; therefore it establishes no eligible
+panel or quality evidence. Do not rerun, repair, replace, or reorder this panel from the
+smoke. The 500-patch commitment, judge, 3,000-row reviewer ledger, harness oracle, and
+formal Task 6D attempt remain unstarted.
 
 **Step 3: Lock the minimum independent judge through TDD**
 

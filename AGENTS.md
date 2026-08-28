@@ -263,7 +263,7 @@ fresh verification and independent review with no open Critical or Important fin
 | 6A | Locked core-vs-majority value gate | `CORE_VALUE_GATE_FAILED`; pivot returned to owner |
 | 6B | Pair-block joint-likelihood pivot and fresh value gate | `PAIR_BLOCK_ADMISSION_FAILED`; Gate A failed, Gate B passed |
 | 6C | JudgeBench external vote value gate for the unchanged legacy core | `FAIL`; attempt 0 final, expansion stopped |
-| 6D | Real-patch Daily Use Gate against voting | Protocol registered; pre-acquisition evidence blocked |
+| 6D | Real-patch Daily Use Gate against voting | Panel smoke formally `BLOCKED`; formal attempt unconsumed |
 | 7 | Leakage-free adaptive cascade | Pending; blocked on both Task 6B gates |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
 | 9 | HaluEval adapter and zero-cost Kaggle notebook | Pending |
@@ -312,14 +312,28 @@ TDD and independent review; the post-acquisition seal may add only
 `configs/daily-use-v1-seal.json`. Do not start the judge milestone with placeholder
 models, candidate hashes, prompts, contexts, clearances, or image/runtime pins.
 
-Do not acquire reviewer outputs or inspect candidate harness outcomes until the
-outcomes-free 500-patch registry, exact three-model panel, prompts, context packages,
-token accounting, perturbation, hashes, and privacy/provenance boundary are frozen. No
-paid API call is authorized. A missing compliant external registry is `BLOCKED`, not a
-reason to run a partial gate, use synthetic evidence, lower the sample size, or begin UI,
-repository ingestion, adapters, scoring, or cascade work. A formal `PASS` permits only a
-new owner-reviewed minimal-product plan; `FAIL` or `INCONCLUSIVE` stops the current
-consensus path.
+Do not acquire formal Task 6D benchmark reviewer outputs or inspect candidate harness
+outcomes until the outcomes-free 500-patch registry, exact three-model panel, prompts,
+context packages, token accounting, perturbation, hashes, and privacy/provenance boundary
+are frozen. The already consumed preregistered synthetic transport/schema smoke is the
+sole exception to that benchmark-output ban; it is closed and authorizes no further call,
+retry, repair, model replacement, or reordering. No paid API call is authorized. A missing
+compliant external registry is `BLOCKED`, not a reason to run a partial gate, use synthetic
+evidence, lower the sample size, or begin UI, repository ingestion, adapters, scoring, or
+cascade work. A formal `PASS` permits only a new owner-reviewed minimal-product plan;
+`FAIL` or `INCONCLUSIVE` stops the current consensus path.
+
+On 2026-08-29 the one permitted zero-cost synthetic panel smoke was consumed and the
+external validator recorded `BLOCKED / result_mismatch`. The immutable runner artifact
+contains exactly one `HTTP 200` and exact enum-schema-valid record for each of the three
+preregistered model digests (`3/3`, zero retries), but PowerShell parameter binding coerced
+the `$null` argument passed to `[AllowNull()][string]$FailureKind` into `""` before JSON
+serialization instead of producing the registered JSON `null`. Those three
+records are transport/schema facts only: they do not establish panel eligibility,
+quality, stability, or a Task 6D result. No model was selected, replaced, or reordered;
+candidate generation, the judge, the 3,000-row ledger, and the harness oracle were not
+started; the formal Task 6D attempt remains unconsumed. Do not rerun or repair this smoke
+under the same acquisition protocol.
 
 ## 7. Mandatory development workflow
 
