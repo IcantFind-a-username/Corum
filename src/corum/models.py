@@ -40,7 +40,18 @@ def _require_non_blank(value: str, field: str) -> None:
         raise ValueError(f"{field} must not be blank")
 
 
-def _require_non_negative(value: float, field: str) -> None:
+def _require_non_negative_real(value: object, field: str) -> None:
+    if isinstance(value, bool) or not isinstance(value, Real):
+        raise TypeError(f"{field} must be a real number")
+    if not isfinite(float(value)):
+        raise ValueError(f"{field} must be finite and non-negative")
+    if value < 0:
+        raise ValueError(f"{field} must be non-negative")
+
+
+def _require_non_negative_integer(value: object, field: str) -> None:
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError(f"{field} must be an integer")
     if value < 0:
         raise ValueError(f"{field} must be non-negative")
 
@@ -69,7 +80,7 @@ class Reviewer:
 
     def __post_init__(self) -> None:
         _require_non_blank(self.reviewer_id, "Reviewer.reviewer_id")
-        _require_non_negative(self.cost, "Reviewer.cost")
+        _require_non_negative_real(self.cost, "Reviewer.cost")
 
 
 @dataclass(frozen=True, slots=True)
@@ -89,8 +100,8 @@ class Review:
             raise TypeError("Review.observation must be an Observation or None")
         _require_non_blank(self.case_id, "Review.case_id")
         _require_non_blank(self.reviewer_id, "Review.reviewer_id")
-        _require_non_negative(self.input_tokens, "Review.input_tokens")
-        _require_non_negative(self.output_tokens, "Review.output_tokens")
+        _require_non_negative_integer(self.input_tokens, "Review.input_tokens")
+        _require_non_negative_integer(self.output_tokens, "Review.output_tokens")
         if self.state is ExecutionState.VALID and self.observation is None:
             raise ValueError("Review.observation is required when state is VALID")
         if self.state is not ExecutionState.VALID and self.observation is not None:
@@ -132,6 +143,18 @@ class FusedPosterior:
 
     def __post_init__(self) -> None:
         _require_instance(self.samples, tuple, "FusedPosterior.samples")
+        _require_non_negative_integer(
+            self.valid_reviewers,
+            "FusedPosterior.valid_reviewers",
+        )
+        _require_non_negative_integer(
+            self.lineage_count,
+            "FusedPosterior.lineage_count",
+        )
+        _require_non_negative_real(
+            self.effective_sample_size,
+            "FusedPosterior.effective_sample_size",
+        )
         probability_fields = (
             ("pass_probability", self.pass_probability),
             ("lower", self.lower),
@@ -144,6 +167,25 @@ class FusedPosterior:
         if self.lower > self.upper:
             raise ValueError(
                 "FusedPosterior.lower must not exceed FusedPosterior.upper"
+            )
+        if self.valid_reviewers == 0:
+            if self.lineage_count != 0 or self.effective_sample_size != 0:
+                raise ValueError(
+                    "FusedPosterior.metadata must be zero when there are no valid reviewers"
+                )
+            return
+        if self.lineage_count == 0:
+            raise ValueError(
+                "FusedPosterior.metadata requires at least one lineage for valid reviewers"
+            )
+        if self.lineage_count > self.valid_reviewers:
+            raise ValueError(
+                "FusedPosterior.metadata cannot have more lineages than valid reviewers"
+            )
+        if not 1 <= self.effective_sample_size <= self.valid_reviewers:
+            raise ValueError(
+                "FusedPosterior.metadata effective_sample_size must be within "
+                "[1, valid_reviewers] for valid reviewers"
             )
 
 

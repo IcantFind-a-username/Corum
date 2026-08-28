@@ -26,15 +26,18 @@ def _posterior(
     pass_probability: float = 0.6,
     lower: float = 0.4,
     upper: float = 0.8,
+    valid_reviewers: int = 2,
+    lineage_count: int = 2,
+    effective_sample_size: float = 1.5,
     samples: tuple[float, ...] = (0.4, 0.8),
 ) -> FusedPosterior:
     return FusedPosterior(
         pass_probability=pass_probability,
         lower=lower,
         upper=upper,
-        valid_reviewers=2,
-        lineage_count=2,
-        effective_sample_size=1.5,
+        valid_reviewers=valid_reviewers,
+        lineage_count=lineage_count,
+        effective_sample_size=effective_sample_size,
         samples=samples,
     )
 
@@ -231,6 +234,33 @@ def test_negative_reviewer_cost_has_an_actionable_error() -> None:
         )
 
 
+@pytest.mark.parametrize("invalid_cost", [True, "1.0"])
+def test_reviewer_cost_rejects_non_real_values(invalid_cost: object) -> None:
+    with pytest.raises(TypeError, match="Reviewer.cost must be a real number"):
+        Reviewer(
+            reviewer_id="reviewer-1",
+            vendor="vendor",
+            family="family",
+            lineage="lineage",
+            cost=invalid_cost,  # type: ignore[arg-type]
+        )
+
+
+@pytest.mark.parametrize("invalid_cost", [nan, inf])
+def test_reviewer_cost_rejects_non_finite_values(invalid_cost: float) -> None:
+    with pytest.raises(
+        ValueError,
+        match="Reviewer.cost must be finite and non-negative",
+    ):
+        Reviewer(
+            reviewer_id="reviewer-1",
+            vendor="vendor",
+            family="family",
+            lineage="lineage",
+            cost=invalid_cost,
+        )
+
+
 @pytest.mark.parametrize("field", ["input_tokens", "output_tokens"])
 def test_negative_token_count_has_an_actionable_error(field: str) -> None:
     token_counts = {field: -1}
@@ -245,6 +275,22 @@ def test_negative_token_count_has_an_actionable_error(field: str) -> None:
             observation=Observation.PASS,
             state=ExecutionState.VALID,
             **token_counts,
+        )
+
+
+@pytest.mark.parametrize("field", ["input_tokens", "output_tokens"])
+@pytest.mark.parametrize("invalid_value", [True, 1.5, "1"])
+def test_token_count_rejects_non_integer_values(
+    field: str,
+    invalid_value: object,
+) -> None:
+    with pytest.raises(TypeError, match=rf"Review\.{field} must be an integer"):
+        Review(
+            case_id="case-1",
+            reviewer_id="reviewer-1",
+            observation=Observation.PASS,
+            state=ExecutionState.VALID,
+            **{field: invalid_value},  # type: ignore[arg-type]
         )
 
 
@@ -386,6 +432,89 @@ def test_posterior_rejects_an_unordered_interval() -> None:
         match="FusedPosterior.lower must not exceed FusedPosterior.upper",
     ):
         _posterior(lower=0.8, upper=0.2)
+
+
+@pytest.mark.parametrize("field", ["valid_reviewers", "lineage_count"])
+@pytest.mark.parametrize("invalid_value", [True, 1.5, "1"])
+def test_posterior_counts_reject_non_integer_values(
+    field: str,
+    invalid_value: object,
+) -> None:
+    with pytest.raises(
+        TypeError,
+        match=rf"FusedPosterior\.{field} must be an integer",
+    ):
+        _posterior(**{field: invalid_value})  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("field", ["valid_reviewers", "lineage_count"])
+def test_posterior_counts_reject_negative_values(field: str) -> None:
+    with pytest.raises(
+        ValueError,
+        match=rf"FusedPosterior\.{field} must be non-negative",
+    ):
+        _posterior(**{field: -1})
+
+
+@pytest.mark.parametrize("invalid_value", [True, "1.5"])
+def test_posterior_ess_rejects_non_real_values(invalid_value: object) -> None:
+    with pytest.raises(
+        TypeError,
+        match="FusedPosterior.effective_sample_size must be a real number",
+    ):
+        _posterior(effective_sample_size=invalid_value)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    ("invalid_value", "message"),
+    [
+        (nan, "FusedPosterior.effective_sample_size must be finite and non-negative"),
+        (inf, "FusedPosterior.effective_sample_size must be finite and non-negative"),
+        (-0.1, "FusedPosterior.effective_sample_size must be non-negative"),
+    ],
+)
+def test_posterior_ess_rejects_non_finite_or_negative_values(
+    invalid_value: float,
+    message: str,
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        _posterior(effective_sample_size=invalid_value)
+
+
+def test_posterior_accepts_exactly_zero_empty_panel_metadata() -> None:
+    posterior = _posterior(
+        valid_reviewers=0,
+        lineage_count=0,
+        effective_sample_size=0.0,
+    )
+
+    assert posterior.valid_reviewers == 0
+    assert posterior.lineage_count == 0
+    assert posterior.effective_sample_size == 0.0
+
+
+@pytest.mark.parametrize(
+    ("valid_reviewers", "lineage_count", "effective_sample_size"),
+    [
+        (0, 0, 0.1),
+        (0, 1, 0.0),
+        (1, 0, 1.0),
+        (1, 2, 1.0),
+        (2, 1, 0.5),
+        (2, 1, 2.1),
+    ],
+)
+def test_posterior_rejects_inconsistent_panel_metadata(
+    valid_reviewers: int,
+    lineage_count: int,
+    effective_sample_size: float,
+) -> None:
+    with pytest.raises(ValueError, match="FusedPosterior.*metadata"):
+        _posterior(
+            valid_reviewers=valid_reviewers,
+            lineage_count=lineage_count,
+            effective_sample_size=effective_sample_size,
+        )
 
 
 def test_package_exposes_its_distribution_version() -> None:
