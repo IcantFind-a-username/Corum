@@ -1,5 +1,7 @@
 # Corum MVP Design
 
+> Canonical repository design. No external workflow plugin is required.
+
 **Status:** Approved for autonomous implementation
 
 **Approval record:** On 2026-08-28, the project owner authorized autonomous design,
@@ -66,7 +68,7 @@ The MVP must:
 
 ## 4. Non-goals
 
-The MVP will not include:
+The statistical MVP will not include:
 
 - a web UI, database, hosted service, workflow framework, or agent orchestration layer;
 - a universal provider abstraction or production secret management;
@@ -75,6 +77,13 @@ The MVP will not include:
   mathematical ideas;
 - redistribution of public datasets when a downloader and checksum are sufficient;
 - a promise that three small open models represent all frontier or closed models.
+
+After the statistical usefulness gates pass, the product phase may add a simple local
+human-contract form, safe bounded project reading, and optional developer-supplied LLM
+API adapters. Human project description, checkpoints, FAIL conditions, and requirement
+evidence remain authoritative. Corum owns post-API validation, traceability, consensus,
+audit, recommendations, and quality scoring; it does not host secrets or require one
+provider.
 
 ## 5. Architecture
 

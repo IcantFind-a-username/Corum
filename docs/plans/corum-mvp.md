@@ -1,8 +1,7 @@
 # Corum MVP Implementation Plan
 
-> **For Codex:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development`
-> to implement this plan task-by-task. Every production behavior starts with a failing
-> test, and every task receives an independent requirements review before the next task.
+> Follow `AGENTS.md` and `DEVELOPMENT.md`. Every production behavior starts with a
+> failing test, and every task receives an independent review before the next task.
 
 **Goal:** Build and evaluate a reproducible, low-cost MVP that demonstrates whether
 dependence-aware Bayesian consensus can improve decision loss and reviewer-call cost
@@ -458,6 +457,7 @@ git commit -m "feat: fuse evidence into risk-aware decisions"
 
 **Files:**
 
+- Modify: `pyproject.toml` (add the declared SciPy runtime dependency only)
 - Create: `src/corum/simulation.py`
 - Create: `tests/test_simulation.py`
 
@@ -487,10 +487,18 @@ class Scenario:
     test: ScenarioPhase
 
 @dataclass(frozen=True, slots=True)
+class LineageCorrelationDiagnostic:
+    reviewer_ids: tuple[str, ...]
+    target_error_correlation: float
+    solved_latent_correlation: float
+    realized_error_correlation: float
+
+@dataclass(frozen=True, slots=True)
 class SimulatedPanel:
     truths: Mapping[str, Truth]
     reviews: tuple[Review, ...]
     gates: Mapping[str, tuple[HardGate, ...]]
+    lineage_diagnostics: Mapping[str, LineageCorrelationDiagnostic]
 
 def simulate_panel(phase: ScenarioPhase, n_cases: int, *, seed: int) -> SimulatedPanel: ...
 def simulate_experiment(
@@ -839,8 +847,8 @@ statement that synthetic success is not external validation.
 ```bash
 uv run pytest tests/test_experiment.py tests/test_cli.py -q
 uv run corum --help
-uv run corum simulate --config tests/fixtures/smoke_config.json --output .superpowers/smoke-run
-uv run corum report --run .superpowers/smoke-run --output .superpowers/smoke-report.md
+uv run corum simulate --config tests/fixtures/smoke_config.json --output .corum-work/smoke-run
+uv run corum report --run .corum-work/smoke-run --output .corum-work/smoke-report.md
 ```
 
 **Step 5: Commit**
@@ -1067,7 +1075,7 @@ Before starting, rerun the registered 10,000-case throughput probe and estimate 
 wall-clock bound from its measured p95 plus 25% margin. If projected runtime exceeds 45
 minutes, optimize vectorized hot paths without changing the registered design. Do not
 silently reduce seeds, cases, or posterior draws; a reduced diagnostic run belongs under
-`.superpowers/`, not `artifacts/mvp/`.
+`.corum-work/`, not `artifacts/mvp/`.
 
 **Step 4: Inspect failures before writing conclusions**
 
@@ -1115,7 +1123,7 @@ technical reasons.
 
 ```bash
 git diff --check
-rg -n -i -f .superpowers/forbidden-patterns.txt .
+rg -n -i -f .corum-work/forbidden-patterns.txt .
 uv sync --all-groups
 uv run ruff format --check .
 uv run ruff check .
@@ -1123,7 +1131,7 @@ uv run mypy src/corum
 uv run pytest -q
 uv build
 uv run corum --version
-uv run corum simulate --config tests/fixtures/smoke_config.json --output .superpowers/final-smoke
+uv run corum simulate --config tests/fixtures/smoke_config.json --output .corum-work/final-smoke
 ```
 
 The ignored local pattern file is created before implementation from the prohibited

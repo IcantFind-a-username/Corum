@@ -5,21 +5,19 @@ not a replacement for the approved architecture or implementation plan.
 
 ## 1. Read before changing anything
 
-Every implementation or review agent must read, in order:
+After discovering this file, every implementation or review agent must read, in order:
 
-1. `docs/superpowers/specs/2026-08-28-corum-mvp-design.md`
-2. the relevant task in `docs/superpowers/plans/2026-08-28-corum-mvp.md`
-3. this file
-4. the current implementation and tests for the affected modules
-5. recent Git history and `git status`
-
-If a local `.superpowers/sdd/2026-08-28-corum-mvp/progress.md` exists, it may be used as
-a local checkpoint, but the tracked design, plan, tests, and Git history remain the
-portable evidence.
+1. `DEVELOPMENT.md`
+2. `docs/specs/corum-mvp-design.md`
+3. the relevant task in `docs/plans/corum-mvp.md`
+4. the matching tracked SDD under `docs/sdd/`, when present
+5. the current implementation and tests for the affected modules
+6. recent Git history and `git status`
 
 Conflict priority is: direct project-owner instruction, approved design, implementation
-plan, this operational summary, then README prose. Do not silently resolve a material
-conflict. Stop and ask the owner, or amend the design and plan with explicit approval.
+plan or owner-approved task SDD, this operational contract, then README prose. Do not
+silently resolve a material conflict. Stop and ask the owner, or record an approved plan
+amendment before implementation.
 
 ## 2. Project identity and sovereignty boundary
 
@@ -60,8 +58,17 @@ The MVP must:
 - measure quality, uncertainty, coverage, and cost reproducibly;
 - validate with zero-cost simulation before optional public-data model inference.
 
-The MVP is not a web product, hosted service, agent framework, universal model-provider
-SDK, policy language, or production secret-management system. Do not add these surfaces.
+The statistical MVP remains a small library and evaluation harness. Productization comes
+after its usefulness gates and follows a human-contract-first boundary:
+
+- a user can provide project description, critical checkpoints, FAIL conditions, and
+  requirement/evidence documents through a simple local UI;
+- safe project reading and LLM-assisted checkpoint suggestions are optional enrichment,
+  never the primary authority;
+- developers bring their own LLM endpoint, key, and model; Corum owns validation,
+  bounded context, traceability, consensus, audit, recommendations, and quality scoring;
+- do not build hosted secret management, a universal provider SDK, or paid inference into
+  the statistical core.
 
 ## 4. Architecture and ownership
 
@@ -189,11 +196,11 @@ fresh verification and independent review with no open Critical or Important fin
 
 | Task | Deliverable | Status at this checkpoint |
 |---:|---|---|
-| 1 | Package scaffold and immutable domain contract | Reopened: numeric validation repair |
+| 1 | Package scaffold and immutable domain contract | Complete, including numeric repair |
 | 2 | Dirichlet reviewer calibration and uncertainty | Complete |
 | 3 | Dependence estimation and duplicate-evidence control | Complete |
-| 4 | Posterior fusion, hard gates, and risk-aware policy | Blocked by Task 1 repair |
-| 5 | Reproducible correlated-panel simulator | Pending |
+| 4 | Posterior fusion, hard gates, and risk-aware policy | Complete (`9e1c606`) |
+| 5 | Reproducible correlated-panel simulator | Current |
 | 6 | Baselines, metrics, and paired uncertainty | Pending |
 | 7 | Leakage-free adaptive cascade | Pending |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
@@ -205,48 +212,21 @@ fresh verification and independent review with no open Critical or Important fin
 The coordinator may update this checkpoint in a repository-level documentation commit.
 Task implementers must not expand their allowed-file list solely to edit status prose.
 
-### Blocking Task 1 repair
+### Task 5 handoff
 
-Before Task 4, repair the existing domain contract in `src/corum/models.py` with failing
-regressions in `tests/test_models.py`. At minimum:
-
-- `Reviewer.cost` must be a finite real number and non-negative;
-- `Review.input_tokens` and `Review.output_tokens` must be non-boolean integers and
-  non-negative;
-- `FusedPosterior.valid_reviewers` and `lineage_count` must be non-boolean, non-negative
-  integers;
-- `FusedPosterior.effective_sample_size` must be finite and non-negative, with structural
-  count/ESS consistency enforced where the approved contract defines it.
-
-The current implementation accepts non-finite cost, fractional token counts, and negative
-quorum/ESS metadata. Do not describe Task 1 as complete until focused regressions, the
-full suite, quality checks, and independent re-review pass. Keep this repair separate from
-Task 4 so fusion does not build on invalid domain records.
-
-### Task 4 handoff
-
-After the blocking repair passes, the next implementation task is exactly Task 4 in the
-tracked plan. It creates:
-
-- `src/corum/fusion.py`
-- `src/corum/decision.py`
-- `scripts/benchmark_fusion.py`
-- `tests/test_fusion.py`
-- `tests/test_decision.py`
-
-It must include the exact known-likelihood oracle, shared posterior draws, scalar/batch
-equivalence, mixed execution-state handling, lineage metadata, hard-gate precedence, and
-the locked CPU benchmark: 10,000 cases, 3 reviewers, 512 draws, and peak working arrays
-below 512 MiB. The benchmark must record CPU model, logical CPU count, Python/NumPy
-versions, relevant thread settings, elapsed method, and peak-array accounting. The first
-accepted Task 4 run establishes the recorded reference development environment and must
-meet the five-second target. A materially different executor still runs and reports the
-same dimensions and memory gate, but its timing alone neither authorizes weakening the
-target nor proves a code regression without a reference-environment rerun.
+The next implementation task is exactly Task 5 in the tracked plan and
+`docs/sdd/0005-correlated-panel-simulator.md`. It may modify only `pyproject.toml` to add
+the declared SciPy runtime dependency and create `src/corum/simulation.py` plus
+`tests/test_simulation.py`. Keep UI, repository ingestion, LLM adapters, baselines, and
+reporting out of this task. Task 5 is the zero-cost testbed that must make later claims
+about consensus usefulness measurable.
 
 ## 7. Mandatory development workflow
 
 Use the detailed steps and exact commit message registered in the current roadmap task.
+Default to low reasoning depth and small TDD increments. Escalate reasoning only for a
+contract conflict, numerical/statistical ambiguity, security/privacy boundary, repeated
+test failure, flaky evidence, or an unresolved independent-review finding.
 
 1. **Establish scope**
    - Derive the accepted base and branch from the current checkpoint, Git history, and

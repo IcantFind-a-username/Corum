@@ -11,6 +11,7 @@ build/
 *.egg-info/
 .worktrees/
 .superpowers/
+.corum-work/
 data/raw/
 artifacts/private/
 
