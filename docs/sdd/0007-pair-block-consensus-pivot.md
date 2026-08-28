@@ -435,6 +435,42 @@ place and reused as a passing result.
 - First frozen judge run, only after reviewed implementation commit:
   `uv run pytest tests/test_pair_value.py -q`
 
+## Frozen attempt 0 outcome (2026-08-29)
+
+- Reviewed implementation commit: `14c363d feat: fuse calibrated reviewer pairs`
+- Exact command:
+  `.venv\Scripts\uv.exe run pytest tests/test_pair_value.py -q`
+- Completion: all `64` registered runs; pytest `1 failed, 1 passed in 21.18s`
+- Overall verdict: `FAIL`
+- Gate A: `FAIL` with `21` failed predicates; record
+  `PAIR_BLOCK_ADMISSION_FAILED`
+- Gate B: `PASS` with no failed predicates
+- Pair decision loss: `0.040214375`; majority: `0.051623125`; relative reduction:
+  `22.1001%`
+- Paired absolute decision-benefit interval: `[0.01067625, 0.01219071875]`
+- Pair coverage: `0.69478125`; pair false-PASS: `0.01953602`; majority false-PASS:
+  `0.07681885`; all `192` policy constraints satisfied
+- Correlated-pool pair NLL: `0.23370348`; naive: `0.25014660`; power: `0.23688172`.
+  Relative improvement was `6.573%` versus naive and `1.342%` versus power, so the
+  registered `3%` power comparison failed.
+- Independent-control pair NLL: `0.21200236`; naive: `0.20737483`; power: `0.20835974`.
+  Pair degraded NLL by `2.231%` and `1.748%`, respectively, beyond the `1%` guardrail.
+- Complete structured result: `docs/results/task-6b-pair-block-attempt-0.json`
+- Captured pytest output: `docs/results/task-6b-pair-block-attempt-0.txt`. The command
+  transport truncated the middle of the traceback, as recorded in that file; the complete
+  one-line structured gate payload and final pytest verdict are present.
+- Command metadata, integrity hashes, and the transport caveat:
+  `docs/results/task-6b-pair-block-attempt-0.md`
+
+Three independent read-only postmortems found no divergence from the registered pair
+calibration or fusion equations. The failures are consistent with the extra interaction
+variance of a full nine-cell joint model and insufficient adaptation toward independence,
+not an implementation defect. No bounded repair cycle was consumed because altering prior
+strength, tempering, model averaging, or independence shrinkage would change the frozen
+model after observing its result. The component remains unadmitted and Task 7 remains
+blocked. Any such successor requires a new prospective SDD, new seeds, and a new judge
+version. This synthetic result is not proof of real-project effectiveness.
+
 ## Review and completion
 
 The registered performance command activates exactly two pair keys,

@@ -422,6 +422,20 @@ Task 7 can begin. A Gate A failure rejects the component; a Gate B failure may l
 experimental component but keeps downstream work blocked. At most two bounded repairs to
 pair calibration or fusion are allowed after the first frozen run.
 
+The first frozen Task 6B run on 2026-08-29 completed all 64 registered runs. Gate B passed:
+pair-block decision loss was `0.040214375` versus majority `0.051623125`, a `22.10%`
+relative reduction; the paired benefit interval was `[0.01067625, 0.01219071875]`, coverage
+was `69.478%`, and false-PASS was `1.954%` versus majority `7.682%`. Gate A failed. In the
+correlated pool, pair NLL improved `6.573%` over naive independence but only `1.342%` over
+the frozen power heuristic, below the registered `3%` threshold. In the independent
+negative control it degraded NLL by `2.231%` versus naive and `1.748%` versus power, beyond
+the `1%` guardrail. The result is permanently `PAIR_BLOCK_ADMISSION_FAILED`; the component
+is unadmitted and Task 7 remains blocked. Independent postmortems found a registered-model
+variance/shrinkage limitation rather than an implementation defect, so no bounded repair
+was consumed. Result artifacts are in `docs/results/task-6b-pair-block-attempt-0.json` and
+`docs/results/task-6b-pair-block-attempt-0.txt`. These are synthetic results, not proof of
+real-project effectiveness.
+
 ### 9.3 Locked HaluEval outcome
 
 The locked HaluEval test returns one of three outcomes:

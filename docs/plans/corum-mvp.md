@@ -847,6 +847,15 @@ must pass to unlock Task 7. After the first run, permit at most two bounded repa
 pair calibration/fusion production code plus additive or stronger regression tests; never
 delete or relax an existing assertion, and never alter the judge in place.
 
+**Frozen attempt 0 result (2026-08-29):** the judge completed all 64 runs on `14c363d`.
+Gate A failed and Gate B passed, producing `PAIR_BLOCK_ADMISSION_FAILED`. Pair decision
+loss was `22.10%` lower than majority with a strictly positive paired interval, but pair NLL
+did not clear the frozen power baseline and breached the independent negative-control
+guardrail. Three independent read-only postmortems found no implementation defect that can
+be repaired without changing the registered model. No repair cycle was consumed; the
+component is unadmitted and Task 7 remains blocked. Preserve the exact artifacts under
+`docs/results/` and return the next pivot/stop decision to the owner.
+
 ---
 
 ## Task 7: Leakage-free adaptive cascade

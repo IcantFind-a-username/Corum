@@ -245,7 +245,7 @@ fresh verification and independent review with no open Critical or Important fin
 | 5 | Reproducible correlated-panel simulator | Complete (`9366053`) |
 | 6 | Baselines, metrics, and paired uncertainty | Complete (`6eba742`) |
 | 6A | Locked core-vs-majority value gate | `CORE_VALUE_GATE_FAILED`; pivot returned to owner |
-| 6B | Pair-block joint-likelihood pivot and fresh value gate | Current; owner approved |
+| 6B | Pair-block joint-likelihood pivot and fresh value gate | `PAIR_BLOCK_ADMISSION_FAILED`; Gate A failed, Gate B passed |
 | 7 | Leakage-free adaptive cascade | Pending; blocked on both Task 6B gates |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
 | 9 | HaluEval adapter and zero-cost Kaggle notebook | Pending |
@@ -256,15 +256,17 @@ fresh verification and independent review with no open Critical or Important fin
 The coordinator may update this checkpoint in a repository-level documentation commit.
 Task implementers must not expand their allowed-file list solely to edit status prose.
 
-### Task 6B handoff
+### Task 6B result and handoff
 
-The current task is exactly the owner-approved prospective pivot in
-`docs/sdd/0007-pair-block-consensus-pivot.md`. Extend only calibration and fusion
-production behavior with a fixed, disjoint pair-block path; the registered public exports
-and performance harness are the only auxiliary production files. Preserve the legacy path
-as a baseline, and commit the fresh independent judge before its first run. Keep cascade,
-UI, repository ingestion, LLM adapters, and reporting out of this task. A green unit suite
-cannot override either registered Task 6B value gate.
+Attempt 0 ran once on `14c363d` under the owner-approved prospective pivot in
+`docs/sdd/0007-pair-block-consensus-pivot.md`. Gate A failed and Gate B passed, so the
+pair-block component is unadmitted and Task 7 remains blocked. The complete structured result
+and captured pytest output are retained under `docs/results/`. Three independent read-only
+postmortems found no implementation defect within the registered equations; no bounded
+repair was consumed. Any future hierarchical shrinkage, independence adaptation, or model
+averaging candidate requires a new prospective SDD, fresh seeds, and a new judge version.
+Keep cascade, UI, repository ingestion, LLM adapters, and reporting blocked until the owner
+approves that pivot or stops the statistical-core track.
 
 ## 7. Mandatory development workflow
 
