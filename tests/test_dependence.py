@@ -201,6 +201,30 @@ def test_empirical_correlation_is_shrunk_toward_zero() -> None:
     assert model.weights_for(("a", "b"))["a"] == pytest.approx(1.0 / 1.75)
 
 
+def test_shrinkage_bias_decays_as_overlap_evidence_grows() -> None:
+    repeated_pattern = (0, 1, 0, 1) * 100
+    examples = _error_pattern_examples(
+        {
+            "a": repeated_pattern,
+            "b": repeated_pattern,
+        }
+    )
+
+    model = fit_dependence(
+        [_reviewer("a"), _reviewer("b")],
+        examples,
+        shrinkage=0.25,
+        min_overlap=4,
+    )
+
+    expected_correlation = 300.0 / 301.0
+    assert model.correlation[0, 1] == pytest.approx(expected_correlation)
+    assert model.correlation[0, 1] > 0.75
+    assert model.effective_sample_size(("a", "b")) == pytest.approx(
+        2.0 / (1.0 + expected_correlation)
+    )
+
+
 def test_sparse_overlap_uses_lineage_fallback_and_unrelated_default() -> None:
     reviewers = [
         _reviewer("a", lineage="shared"),

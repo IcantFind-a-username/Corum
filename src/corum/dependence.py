@@ -432,7 +432,13 @@ def fit_dependence(
                 )
                 weight_overrides[(first_id, second_id)] = correlation
             else:
-                correlation *= 1.0 - shrinkage_value
+                # Interpret shrinkage as finite zero-correlation pseudo-evidence whose
+                # influence is ``shrinkage`` at the minimum accepted overlap. This
+                # preserves the threshold behavior while allowing empirical evidence
+                # to dominate as overlap grows.
+                data_weight = len(overlap) * (1.0 - shrinkage_value)
+                prior_weight = overlap_threshold * shrinkage_value
+                correlation *= data_weight / (data_weight + prior_weight)
             raw_correlation[first_index, second_index] = correlation
             raw_correlation[second_index, first_index] = correlation
 
