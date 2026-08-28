@@ -43,7 +43,11 @@ def _require_non_blank(value: str, field: str) -> None:
 def _require_non_negative_real(value: object, field: str) -> None:
     if isinstance(value, bool) or not isinstance(value, Real):
         raise TypeError(f"{field} must be a real number")
-    if not isfinite(float(value)):
+    try:
+        finite = isfinite(float(value))
+    except OverflowError:
+        finite = True
+    if not finite:
         raise ValueError(f"{field} must be finite and non-negative")
     if value < 0:
         raise ValueError(f"{field} must be non-negative")

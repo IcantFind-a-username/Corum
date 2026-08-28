@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from dataclasses import FrozenInstanceError
+from fractions import Fraction
 from importlib.metadata import version
 from math import inf, nan
 
@@ -259,6 +260,20 @@ def test_reviewer_cost_rejects_non_finite_values(invalid_cost: float) -> None:
             lineage="lineage",
             cost=invalid_cost,
         )
+
+
+def test_reviewer_cost_accepts_finite_real_that_overflows_float_conversion() -> None:
+    cost = Fraction(10**400, 1)
+
+    reviewer = Reviewer(
+        reviewer_id="reviewer-1",
+        vendor="vendor",
+        family="family",
+        lineage="lineage",
+        cost=cost,  # type: ignore[arg-type]
+    )
+
+    assert reviewer.cost == cost
 
 
 @pytest.mark.parametrize("field", ["input_tokens", "output_tokens"])
