@@ -491,11 +491,15 @@ class LineageCorrelationDiagnostic:
     reviewer_ids: tuple[str, ...]
     target_error_correlation: float
     solved_latent_correlation: float
+    minimum_eigenvalue: float
     realized_error_correlation: float
+    overlap_count: int
 
 @dataclass(frozen=True, slots=True)
 class SimulatedPanel:
+    seed: int
     truths: Mapping[str, Truth]
+    difficulty_by_case: Mapping[str, bool]
     reviews: tuple[Review, ...]
     gates: Mapping[str, tuple[HardGate, ...]]
     lineage_diagnostics: Mapping[str, LineageCorrelationDiagnostic]
@@ -515,13 +519,42 @@ Generate correlated categorical observations with a Gaussian copula and fixed re
 marginals. Built-ins are `independent`, `clone_pair`, `majority_trap`,
 `informative_missingness`, `drift`, and `cascade_cost`. Every generated review retains
 an execution state; missingness must be capable of depending on truth/difficulty.
+`SimulatedPanel` records its exact seed and case difficulty labels. Task 5 emits an
+explicit empty gate tuple per case; hard-gate canary generation is not configurable in
+this interface and remains a later experiment responsibility.
+
+Semantic generation first samples the correlated binary error event, where `ABSTAIN`
+counts as an error, then samples the configured wrong-vs-abstain category conditional on
+error. This preserves each `(truth, observation)` marginal while targeting the quantity
+used by dependence diagnostics. Timeout and invalid rates are unconditional base rates,
+must sum to at most one, and are increased on difficult/FAIL cases by the declared
+`informative_missingness` strength without ever attaching an observation to a non-valid
+review. The adversarial reviewer ID is a validated declaration; its changed behavior is
+encoded explicitly in that phase's likelihood matrix rather than silently inverted by
+the simulator.
+
 Correlation groups use the immutable reviewer `lineage`; `family` remains descriptive
 metadata and is not a second grouping key. Each configured value is a target mean
 *observed binary error correlation*, not a latent-normal correlation. For each lineage,
 the simulator deterministically solves one valid equicorrelated Gaussian-copula parameter
 whose expected pairwise observed error correlation matches the target, accounting for
 class prevalence and reviewer marginals. It rejects infeasible targets and records both
-the solved latent parameter and realized error correlation.
+the solved latent parameter and realized error correlation. Task 5 accepts non-negative
+targets only; omitted lineages are independent, and correlation keys must name a lineage
+containing at least two reviewers. Realized correlation uses overlapping `VALID` reviews,
+with `ABSTAIN` counted as error, and records the overlap count. A zero-variance or
+insufficient-overlap realized value is rejected for a registered diagnostic rather than
+reported as fabricated evidence. `n_cases` may be zero, but registered correlation
+diagnostics require enough cases to estimate a finite realized value.
+
+For a lineage with heterogeneous reviewers, both the configured target and diagnostic are
+the unweighted arithmetic mean over every unordered reviewer pair. The solver matches the
+mean of the pair-specific expected correlations; the realized value averages separately
+computed overlapping-`VALID` pair correlations and never pools vectors or selects a
+favorable pair. A target below the truth-mixture correlation at latent zero, above the
+reachable maximum, or involving a zero-variance error process is infeasible. The 100,000
+case `0.03` target diagnostic uses no informative missingness; missingness selection bias
+is tested separately rather than hidden inside the solver tolerance.
 
 **Step 1: Write failing simulation tests**
 
@@ -569,6 +602,7 @@ git commit -m "feat: simulate correlated reviewer panels"
 - Create: `src/corum/metrics.py`
 - Create: `tests/test_baselines.py`
 - Create: `tests/test_metrics.py`
+- Create: `tests/test_core_value.py`
 
 **Required public interface:**
 
@@ -692,9 +726,27 @@ git add src/corum/baselines.py src/corum/metrics.py tests/test_baselines.py test
 git commit -m "feat: add consensus baselines and metrics"
 ```
 
+**Step 5: Run the locked Core Value Gate before Task 7**
+
+`tests/test_core_value.py` is an independent vertical judge. It uses the same reviews for
+Corum, ordinary unweighted majority, and naive independent fusion; it may not tune on test
+rows or rewrite the pre-registered seeds, losses, scenarios, policies, or thresholds.
+Run:
+
+```bash
+uv run pytest tests/test_core_value.py -q
+```
+
+The exact machine criteria are Section 9.1 of the canonical design. Failure blocks Task 7
+and all product-surface expansion. Allow at most three bounded core-repair cycles without
+changing the judge; after that, record `CORE_VALUE_GATE_FAILED` for owner judgment.
+
 ---
 
 ## Task 7: Leakage-free adaptive cascade
+
+**Entry condition:** the locked Core Value Gate passes. A green unit suite without that
+value result is insufficient.
 
 **Files:**
 

@@ -326,6 +326,29 @@ The simulation stage passes only when all of these hold:
 8. Cascade mean calls are no more than `2.25 reviewers out of 3`, while decision loss is no more than
    `0.01` worse than the full static panel.
 
+### 9.1 Early Core Value Gate
+
+Before building the cascade or product surfaces, the simulator, baselines, metrics, and
+existing static core run one locked vertical comparison on identical reviews. Across 20
+fixed seeds for `independent`, `clone_pair`, and `majority_trap` with 2,000 calibration
+and 5,000 test cases per seed:
+
+1. full-static Corum decision loss is at least 10% lower than ordinary unweighted
+   majority loss in the pooled paired estimate, and the paired 95% bootstrap interval for
+   `majority_loss - corum_loss` has a lower bound above zero;
+2. Corum is no more than `0.01` worse than majority in any registered scenario, coverage
+   is at least 50%, false-PASS risk is no more than 2 percentage points worse, and hard
+   gates have zero violations;
+3. in `clone_pair` and `majority_trap`, dependence correction improves NLL or Brier by at
+   least 5% relative to naive independent fusion; in `independent`, it worsens neither by
+   more than 1%.
+
+Loss weights, seeds, cases, scenario definitions, policies, baseline code, and thresholds
+are locked before the first result. Passing is synthetic evidence that the core deserves
+external validation, not proof that it already helps developers. Failure blocks Task 7;
+the judge is independent of the implementation and the owner keeps the final pivot/stop
+decision.
+
 The locked HaluEval test returns one of three outcomes:
 
 - `PASS`: full-static decision loss improves by at least 10% over the locked best simple

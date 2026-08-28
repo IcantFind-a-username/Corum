@@ -70,6 +70,25 @@ after its usefulness gates and follows a human-contract-first boundary:
 - do not build hosted secret management, a universal provider SDK, or paid inference into
   the statistical core.
 
+### 3.1 Evidence before components
+
+Corum is useful software, not a research-component collection. A new component is admitted
+only when it serves a pre-registered user outcome and has a cheaper existing-practice
+baseline or ablation to beat. Infrastructure such as simulation is allowed only as the
+minimum machinery for the next locked comparison; it is not user value by itself.
+
+Before Task 7 or any product-surface expansion, the full-static Corum core must pass the
+locked Core Value Gate after Task 6 against ordinary unweighted majority voting. The gate
+also compares dependence-aware fusion with naive independent fusion. Builders may not
+change scenarios, loss weights, thresholds, test seeds, coverage requirements, or the
+baseline after seeing gate results. Synthetic success permits external validation; it
+does not prove real-world usefulness.
+
+If the gate fails, stop new-component work. Permit at most three bounded repair iterations
+within the existing core, each with a regression and the unchanged independent judge. If
+it still fails, record `CORE_VALUE_GATE_FAILED` and return the pivot/stop decision to the
+project owner.
+
 ## 4. Architecture and ownership
 
 The statistical core is a small typed Python library. Network access, dataset download,
@@ -202,6 +221,7 @@ fresh verification and independent review with no open Critical or Important fin
 | 4 | Posterior fusion, hard gates, and risk-aware policy | Complete (`9e1c606`) |
 | 5 | Reproducible correlated-panel simulator | Current |
 | 6 | Baselines, metrics, and paired uncertainty | Pending |
+| 6A | Locked core-vs-majority value gate | Pending; blocks Task 7 |
 | 7 | Leakage-free adaptive cascade | Pending |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
 | 9 | HaluEval adapter and zero-cost Kaggle notebook | Pending |

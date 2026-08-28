@@ -1,7 +1,7 @@
 # SDD: Task 5 correlated-panel simulator
 
 - Status: approved
-- Accepted base: `9e1c606`
+- Accepted base: `91fa7ea`
 - Exact commit: `feat: simulate correlated reviewer panels`
 - Allowed files: `pyproject.toml`, `src/corum/simulation.py`,
   `tests/test_simulation.py`
@@ -11,6 +11,8 @@
 Provide a deterministic, zero-cost simulator that can falsifiably test whether Corum's
 dependence-aware consensus improves risk and cost under independent reviewers, clone
 correlation, majority traps, informative missingness, drift, and cascade-oriented costs.
+The simulator is accepted as test infrastructure only; it creates no standalone value
+claim and must feed the locked core-vs-majority gate immediately after Task 6.
 
 ## Non-goals
 
@@ -29,6 +31,20 @@ Gaussian correlations. Solve a deterministic equicorrelated latent parameter, re
 infeasible or non-PSD configurations, and expose enough immutable metadata to compare the
 target, solved parameter, and realized diagnostic correlation without hidden truth or
 test-set tuning.
+
+The panel records the exact seed, immutable truth and difficulty mappings, one review per
+case/reviewer, explicit empty gate tuples, and lineage diagnostics containing reviewer
+IDs, target, solved latent correlation, minimum eigenvalue, realized overlapping-VALID
+error correlation, and overlap count. `ABSTAIN` is an error for correlation but remains a
+valid categorical outcome. Base timeout plus invalid rate cannot exceed one;
+`informative_missingness` increases missingness on difficult and FAIL cases. The
+adversarial ID only identifies behavior already encoded in phase likelihoods.
+
+One lineage target means the unweighted arithmetic mean across all unordered reviewer
+pairs. Solve against the mean of pair-specific expected correlations and report the mean
+of separately estimated overlapping-`VALID` pair correlations. Reject zero-variance or
+unreachable targets. Run the 100,000-case `0.03` accuracy gate without informative
+missingness and test informative selection separately.
 
 ## TDD evidence
 

@@ -34,6 +34,19 @@ behavior.
 - Parallel work is read-only unless task files are independent. Production modules remain
   sequential so evidence cannot race implementation.
 
+## Component admission
+
+Before implementing a component beyond a minimal test spike, record its user outcome,
+existing-practice baseline, locked dataset/scenario split, metric, pass threshold,
+non-regression boundaries, and removal/stop rule in the SDD. The builder cannot weaken
+that acceptance condition. An independent deterministic judge runs it, with a maximum of
+three repair cycles before owner escalation.
+
+Infrastructure is justified by the comparison it enables, not by its architecture. Do
+not begin the adaptive cascade, UI, project reader, LLM integration, quality score, or
+another surface until its predecessor's value gate passes. Human judgment owns whether a
+passing synthetic result is meaningful enough to continue.
+
 ## Baseline commands
 
 ```bash
