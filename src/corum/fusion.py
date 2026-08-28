@@ -1,16 +1,22 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from math import exp, isfinite, log
 from numbers import Integral, Real
 from types import MappingProxyType
 
 import numpy as np
 
-from corum.calibration import OBSERVATION_ORDER, ReviewerCalibration
+from corum.calibration import (
+    OBSERVATION_ORDER,
+    PairKey,
+    ReviewerCalibration,
+    ReviewerPairCalibration,
+)
 from corum.dependence import DependenceModel
 from corum.models import ExecutionState, FusedPosterior, Observation, Review
 
 _LIKELIHOOD_SHAPE = (2, 3)
+_JOINT_LIKELIHOOD_SHAPE = (2, 3, 3)
 _MIN_PROBABILITY = np.finfo(np.float64).tiny
 
 
@@ -42,6 +48,83 @@ def _read_only_copy(array: np.ndarray) -> np.ndarray:
     return np.frombuffer(contiguous.tobytes(), dtype=contiguous.dtype).reshape(
         contiguous.shape
     )
+
+
+def _validated_pair_key(value: object) -> PairKey:
+    if not isinstance(value, tuple) or len(value) != 2:
+        raise ValueError("pair key must be a two-item tuple")
+    first, second = value
+    if not isinstance(first, str) or not isinstance(second, str):
+        raise TypeError("pair key reviewer IDs must be strings")
+    if not first.strip() or not second.strip():
+        raise ValueError("pair key reviewer IDs must not be blank")
+    if first == second:
+        raise ValueError("pair key reviewer IDs must be distinct")
+    if first > second:
+        raise ValueError("pair key must use canonical sorted reviewer order")
+    return first, second
+
+
+def _validated_pair_partition(
+    raw_pairs: Sequence[object],
+    reviewer_ids: tuple[str, ...],
+) -> tuple[PairKey, ...]:
+    known_ids = set(reviewer_ids)
+    used_ids: set[str] = set()
+    pairs: list[PairKey] = []
+    for raw_pair in raw_pairs:
+        pair = _validated_pair_key(raw_pair)
+        unknown = sorted(set(pair) - known_ids)
+        if unknown:
+            raise ValueError("unknown reviewer IDs in pair key: " + ", ".join(unknown))
+        overlap = sorted(set(pair) & used_ids)
+        if overlap:
+            raise ValueError(
+                "pair keys must not overlap; repeated reviewer IDs: "
+                + ", ".join(overlap)
+            )
+        used_ids.update(pair)
+        pairs.append(pair)
+    return tuple(sorted(pairs))
+
+
+def _validated_joint_likelihood(
+    value: object,
+    *,
+    name: str,
+) -> np.ndarray:
+    try:
+        array = np.array(value, dtype=float, copy=True)
+    except (OverflowError, TypeError, ValueError) as error:
+        raise ValueError(f"{name} must be a numeric array") from error
+    if array.shape != _JOINT_LIKELIHOOD_SHAPE:
+        raise ValueError(f"{name} must have shape (2, 3, 3)")
+    if not np.all(np.isfinite(array)) or np.any((array < 0.0) | (array > 1.0)):
+        raise ValueError(f"{name} entries must be finite probabilities")
+    if not np.allclose(array.sum(axis=(1, 2)), 1.0, rtol=1e-9, atol=1e-12):
+        raise ValueError(f"{name} truth rows must sum to one")
+    return array
+
+
+def _validated_joint_likelihood_draws(
+    value: object,
+    *,
+    name: str,
+    expected_draws: int,
+) -> np.ndarray:
+    try:
+        array = np.array(value, dtype=float, copy=True)
+    except (OverflowError, TypeError, ValueError) as error:
+        raise ValueError(f"{name} must be a numeric array") from error
+    if array.ndim != 4 or array.shape[1:] != _JOINT_LIKELIHOOD_SHAPE:
+        raise ValueError(f"{name} must have shape (draws, 2, 3, 3)")
+    if array.shape[0] != expected_draws:
+        raise ValueError("all pair likelihood arrays must use the same draw count")
+    if not np.all(np.isfinite(array)) or np.any((array < 0.0) | (array > 1.0)):
+        raise ValueError(f"{name} entries must be finite probabilities")
+    if not np.allclose(array.sum(axis=(2, 3)), 1.0, rtol=1e-9, atol=1e-12):
+        raise ValueError(f"{name} truth rows must sum to one")
+    return _read_only_copy(array)
 
 
 def _validated_likelihood_array(
@@ -96,6 +179,54 @@ def _immutable_likelihood_draws(
     return MappingProxyType(copied)
 
 
+def _immutable_pair_likelihood_draws(
+    pair_likelihood_draws: Mapping[PairKey, np.ndarray],
+    reviewer_ids: tuple[str, ...],
+    *,
+    expected_draws: int,
+) -> Mapping[PairKey, np.ndarray]:
+    if not isinstance(pair_likelihood_draws, Mapping):
+        raise TypeError("pair_likelihood_draws must be a mapping")
+    pairs = _validated_pair_partition(
+        tuple(pair_likelihood_draws),
+        reviewer_ids,
+    )
+    copied = {
+        pair: _validated_joint_likelihood_draws(
+            pair_likelihood_draws[pair],
+            name=f"pair_likelihood_draws[{pair!r}]",
+            expected_draws=expected_draws,
+        )
+        for pair in pairs
+    }
+    return MappingProxyType(copied)
+
+
+def _validated_pair_calibration_registry(
+    pair_calibrations: Mapping[PairKey, ReviewerPairCalibration] | None,
+    reviewer_ids: tuple[str, ...],
+) -> Mapping[PairKey, ReviewerPairCalibration]:
+    if pair_calibrations is None:
+        return MappingProxyType({})
+    if not isinstance(pair_calibrations, Mapping):
+        raise TypeError("pair_calibrations must be a mapping or None")
+    pairs = _validated_pair_partition(tuple(pair_calibrations), reviewer_ids)
+    copied: dict[PairKey, ReviewerPairCalibration] = {}
+    for pair in pairs:
+        calibration = pair_calibrations[pair]
+        if not isinstance(calibration, ReviewerPairCalibration):
+            raise TypeError(
+                f"pair_calibrations[{pair!r}] must be a ReviewerPairCalibration"
+            )
+        if calibration.reviewer_ids != pair:
+            raise ValueError(
+                "pair calibration mapping key must match record reviewer_ids; "
+                f"key={pair!r}, reviewer_ids={calibration.reviewer_ids!r}"
+            )
+        copied[pair] = calibration
+    return MappingProxyType(copied)
+
+
 def _immutable_lineages(
     lineage_by_reviewer: Mapping[str, str],
     dependence: DependenceModel,
@@ -118,6 +249,7 @@ class FusionContext:
     lineage_by_reviewer: Mapping[str, str]
     prior_pass: float
     credible_mass: float
+    pair_likelihood_draws: Mapping[PairKey, np.ndarray] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not isinstance(self.dependence, DependenceModel):
@@ -137,7 +269,18 @@ class FusionContext:
             self.lineage_by_reviewer,
             self.dependence,
         )
+        first_id = self.dependence.reviewer_ids[0]
+        pair_likelihood_draws = _immutable_pair_likelihood_draws(
+            self.pair_likelihood_draws,
+            self.dependence.reviewer_ids,
+            expected_draws=int(likelihood_draws[first_id].shape[0]),
+        )
         object.__setattr__(self, "likelihood_draws", likelihood_draws)
+        object.__setattr__(
+            self,
+            "pair_likelihood_draws",
+            pair_likelihood_draws,
+        )
         object.__setattr__(self, "lineage_by_reviewer", lineages)
         object.__setattr__(self, "prior_pass", prior_pass)
         object.__setattr__(self, "credible_mass", credible_mass)
@@ -156,6 +299,7 @@ def build_fusion_context(
     draws: int = 512,
     credible_mass: float = 0.95,
     seed: int,
+    pair_calibrations: Mapping[PairKey, ReviewerPairCalibration] | None = None,
 ) -> FusionContext:
     if not isinstance(calibrations, Mapping):
         raise TypeError("calibrations must be a mapping")
@@ -176,16 +320,26 @@ def build_fusion_context(
     for reviewer_id in dependence.reviewer_ids:
         calibration = calibrations[reviewer_id]
         if not isinstance(calibration, ReviewerCalibration):
-            raise TypeError(f"calibrations[{reviewer_id!r}] must be a ReviewerCalibration")
+            raise TypeError(
+                f"calibrations[{reviewer_id!r}] must be a ReviewerCalibration"
+            )
         if calibration.reviewer_id != reviewer_id:
             raise ValueError(
                 "calibration mapping key must match calibration.reviewer_id; "
                 f"key={reviewer_id!r}, reviewer_id={calibration.reviewer_id!r}"
             )
+    checked_pair_calibrations = _validated_pair_calibration_registry(
+        pair_calibrations,
+        dependence.reviewer_ids,
+    )
     rng = np.random.default_rng(int(seed))
     likelihood_draws = {
         reviewer_id: calibrations[reviewer_id].sample_likelihoods(draw_count, rng)
         for reviewer_id in dependence.reviewer_ids
+    }
+    pair_likelihood_draws = {
+        pair: checked_pair_calibrations[pair].sample_likelihoods(draw_count, rng)
+        for pair in checked_pair_calibrations
     }
     return FusionContext(
         likelihood_draws=likelihood_draws,
@@ -193,6 +347,7 @@ def build_fusion_context(
         lineage_by_reviewer=dependence.lineage_by_reviewer,
         prior_pass=prior_pass,
         credible_mass=credible_mass,
+        pair_likelihood_draws=pair_likelihood_draws,
     )
 
 
@@ -274,6 +429,86 @@ def fuse_known_likelihoods(
         )
         log_pass += numeric_weight * log(pass_likelihood)
         log_fail += numeric_weight * log(fail_likelihood)
+
+    maximum = max(log_pass, log_fail)
+    pass_mass = exp(log_pass - maximum)
+    fail_mass = exp(log_fail - maximum)
+    return pass_mass / (pass_mass + fail_mass)
+
+
+def fuse_known_pair_likelihoods(
+    observations: Mapping[str, Observation],
+    likelihoods: Mapping[str, np.ndarray],
+    pair_likelihoods: Mapping[PairKey, np.ndarray],
+    *,
+    prior_pass: float,
+) -> float:
+    if not isinstance(observations, Mapping):
+        raise TypeError("observations must be a mapping")
+    if not isinstance(likelihoods, Mapping):
+        raise TypeError("likelihoods must be a mapping")
+    if not isinstance(pair_likelihoods, Mapping):
+        raise TypeError("pair_likelihoods must be a mapping")
+    prior = _validate_open_probability(prior_pass, "prior_pass")
+    observation_ids = set(observations)
+    missing_likelihoods = sorted(observation_ids - set(likelihoods))
+    if missing_likelihoods:
+        raise ValueError(
+            "missing likelihoods for reviewer IDs: " + ", ".join(missing_likelihoods)
+        )
+    observation_codes: dict[str, int] = {}
+    validated_singletons: dict[str, np.ndarray] = {}
+    for reviewer_id in sorted(observation_ids):
+        observation = observations[reviewer_id]
+        if not isinstance(observation, Observation):
+            raise TypeError(f"observations[{reviewer_id!r}] must be an Observation")
+        observation_codes[reviewer_id] = OBSERVATION_ORDER.index(observation)
+        validated_singletons[reviewer_id] = _validated_known_likelihood(
+            likelihoods[reviewer_id],
+            reviewer_id,
+        )
+
+    pairs = _validated_pair_partition(
+        tuple(pair_likelihoods),
+        tuple(likelihoods),
+    )
+    validated_pairs = {
+        pair: _validated_joint_likelihood(
+            pair_likelihoods[pair],
+            name=f"pair_likelihoods[{pair!r}]",
+        )
+        for pair in pairs
+    }
+
+    log_pass = log(prior)
+    log_fail = log1p_negative(prior)
+    used_ids: set[str] = set()
+    for pair in pairs:
+        first, second = pair
+        if first not in observation_codes or second not in observation_codes:
+            continue
+        joint = validated_pairs[pair]
+        first_code = observation_codes[first]
+        second_code = observation_codes[second]
+        log_pass += log(
+            max(
+                float(joint[0, first_code, second_code]),
+                _MIN_PROBABILITY,
+            )
+        )
+        log_fail += log(
+            max(
+                float(joint[1, first_code, second_code]),
+                _MIN_PROBABILITY,
+            )
+        )
+        used_ids.update(pair)
+
+    for reviewer_id in sorted(observation_ids - used_ids):
+        likelihood = validated_singletons[reviewer_id]
+        observation_index = observation_codes[reviewer_id]
+        log_pass += log(max(float(likelihood[0, observation_index]), _MIN_PROBABILITY))
+        log_fail += log(max(float(likelihood[1, observation_index]), _MIN_PROBABILITY))
 
     maximum = max(log_pass, log_fail)
     pass_mass = exp(log_pass - maximum)
@@ -382,7 +617,9 @@ class BatchFusedPosterior:
                 raise ValueError(f"empty batch rows must have NaN {name}")
             values = array[non_empty]
             if np.any(~np.isfinite(values)) or np.any((values < 0.0) | (values > 1.0)):
-                raise ValueError(f"non-empty {name} values must be finite probabilities")
+                raise ValueError(
+                    f"non-empty {name} values must be finite probabilities"
+                )
         if np.any(lower[non_empty] > upper[non_empty]):
             raise ValueError("batch lower values must not exceed upper values")
         object.__setattr__(self, "pass_probability", pass_probability)
@@ -500,12 +737,10 @@ def _fuse_matrix_kernel(
                 np.ix_(local_rows, contributing_columns)
             ]
             all_abstain = np.all(
-                contributing_codes
-                == OBSERVATION_ORDER.index(Observation.ABSTAIN),
+                contributing_codes == OBSERVATION_ORDER.index(Observation.ABSTAIN),
                 axis=1,
             )
             global_rows = chunk_start + local_rows
-            weights = context.dependence.weights_for(subset_ids)
             log_pass = np.full(
                 (local_rows.size, draw_count),
                 log(context.prior_pass),
@@ -516,20 +751,55 @@ def _fuse_matrix_kernel(
                 log1p_negative(context.prior_pass),
                 dtype=np.float64,
             )
-            for reviewer_index, reviewer_id in enumerate(reviewer_ids):
-                if not pattern[reviewer_index]:
-                    continue
-                codes = chunk_observations[local_rows, reviewer_index]
-                reviewer_draws = context.likelihood_draws[reviewer_id]
-                pass_values = np.take(reviewer_draws[:, 0, :], codes, axis=1).T
-                fail_values = np.take(reviewer_draws[:, 1, :], codes, axis=1).T
-                weight = weights[reviewer_id]
-                log_pass += weight * np.log(
-                    np.maximum(pass_values, _MIN_PROBABILITY)
-                )
-                log_fail += weight * np.log(
-                    np.maximum(fail_values, _MIN_PROBABILITY)
-                )
+            if not context.pair_likelihood_draws:
+                weights = context.dependence.weights_for(subset_ids)
+                for reviewer_index, reviewer_id in enumerate(reviewer_ids):
+                    if not pattern[reviewer_index]:
+                        continue
+                    codes = chunk_observations[local_rows, reviewer_index]
+                    reviewer_draws = context.likelihood_draws[reviewer_id]
+                    pass_values = np.take(reviewer_draws[:, 0, :], codes, axis=1).T
+                    fail_values = np.take(reviewer_draws[:, 1, :], codes, axis=1).T
+                    weight = weights[reviewer_id]
+                    log_pass += weight * np.log(
+                        np.maximum(pass_values, _MIN_PROBABILITY)
+                    )
+                    log_fail += weight * np.log(
+                        np.maximum(fail_values, _MIN_PROBABILITY)
+                    )
+            else:
+                column_by_reviewer = {
+                    reviewer_id: index for index, reviewer_id in enumerate(reviewer_ids)
+                }
+                used_pair_members: set[str] = set()
+                for pair, joint_draws in context.pair_likelihood_draws.items():
+                    first_index = column_by_reviewer.get(pair[0])
+                    second_index = column_by_reviewer.get(pair[1])
+                    first_valid = first_index is not None and bool(pattern[first_index])
+                    second_valid = second_index is not None and bool(
+                        pattern[second_index]
+                    )
+                    if not first_valid or not second_valid:
+                        continue
+                    if first_index is None or second_index is None:
+                        raise RuntimeError("valid pair member lost its matrix column")
+                    first_codes = chunk_observations[local_rows, first_index]
+                    second_codes = chunk_observations[local_rows, second_index]
+                    pass_values = joint_draws[:, 0, first_codes, second_codes].T
+                    fail_values = joint_draws[:, 1, first_codes, second_codes].T
+                    log_pass += np.log(np.maximum(pass_values, _MIN_PROBABILITY))
+                    log_fail += np.log(np.maximum(fail_values, _MIN_PROBABILITY))
+                    used_pair_members.update(pair)
+
+                for reviewer_index, reviewer_id in enumerate(reviewer_ids):
+                    if not pattern[reviewer_index] or reviewer_id in used_pair_members:
+                        continue
+                    codes = chunk_observations[local_rows, reviewer_index]
+                    reviewer_draws = context.likelihood_draws[reviewer_id]
+                    pass_values = np.take(reviewer_draws[:, 0, :], codes, axis=1).T
+                    fail_values = np.take(reviewer_draws[:, 1, :], codes, axis=1).T
+                    log_pass += np.log(np.maximum(pass_values, _MIN_PROBABILITY))
+                    log_fail += np.log(np.maximum(fail_values, _MIN_PROBABILITY))
             maximum = np.maximum(log_pass, log_fail)
             pass_mass = np.exp(log_pass - maximum)
             fail_mass = np.exp(log_fail - maximum)
@@ -592,9 +862,7 @@ def fuse_review_matrix(
         if reviewer_id in set(ids)
     )
     if ids != canonical_ids:
-        input_index = {
-            reviewer_id: index for index, reviewer_id in enumerate(ids)
-        }
+        input_index = {reviewer_id: index for index, reviewer_id in enumerate(ids)}
         canonical_columns = [input_index[reviewer_id] for reviewer_id in canonical_ids]
         observation_array = np.ascontiguousarray(
             observation_array[:, canonical_columns]
@@ -645,9 +913,7 @@ def fuse_reviews(
         raise ValueError("unknown reviewer IDs: " + ", ".join(unknown))
 
     reviewer_ids = context.dependence.reviewer_ids
-    index_by_id = {
-        reviewer_id: index for index, reviewer_id in enumerate(reviewer_ids)
-    }
+    index_by_id = {reviewer_id: index for index, reviewer_id in enumerate(reviewer_ids)}
     observation_codes = np.full((1, len(reviewer_ids)), -1, dtype=np.int64)
     valid_mask = np.zeros((1, len(reviewer_ids)), dtype=bool)
     for review in review_tuple:
