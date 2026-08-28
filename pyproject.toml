@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "corum"
+version = "0.1.0"
+description = "Evidence-aware, dependence-aware consensus among imperfect reviewers"
+requires-python = ">=3.11"
+
+[dependency-groups]
+test = [
+    "pytest>=8.3",
+]
+quality = [
+    "mypy>=1.14",
+    "ruff>=0.9",
+]
+dev = [
+    { include-group = "test" },
+    { include-group = "quality" },
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/corum"]
