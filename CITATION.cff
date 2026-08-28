@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use Corum, please cite this software."
+title: "Corum: Evidence-aware consensus for imperfect reviewers"
+type: software
+authors:
+  - family-names: "Xu"
+    given-names: "Franz"
+repository-code: "https://github.com/IcantFind-a-username/Corum"
+license: Apache-2.0
+version: 0.1.0-dev
+date-released: 2026-08-28
