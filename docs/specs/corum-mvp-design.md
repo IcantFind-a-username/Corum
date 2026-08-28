@@ -300,6 +300,36 @@ fresh inference, or developer adoption. A pass permits only a minimal offline ev
 and a separate real developer-project/patch gate; it does not admit the failed pair path
 or unlock the cascade.
 
+#### 8.2.1 Daily Use Gate
+
+JudgeBench attempt 0 failed, so none of those conditional next steps became authorized.
+The owner subsequently approved one separate, prospective Task 6D investment gate rather
+than a repair or component expansion. It evaluates the accepted-base legacy no-pair
+fusion on exactly 500 SWE-bench Verified candidate patches. The executable harness is the
+truth; three distinct-lineage LLM reviewers judge the issue and candidate patch without
+seeing gold patches, tests, harness output, or fixing history. Corum and two voting
+baselines consume the exact same cached reviews and token ledger.
+
+Task 6D uses a leave-one-repository-out fit, a prospective full-coverage posterior readout,
+ordinary majority, and reliability-weighted voting. Every case also has a mechanically
+equivalent complete-block order perturbation with identical instruction bytes. `DEFER`
+counts as incorrect and uncovered. A pass
+requires at least five percentage points more accuracy than each vote, no more than 1.2x
+tokens, at least 30% fewer perturbation flips, at least 90% coverage, no worse false-safe
+incidence, and positive paired 95% confidence evidence for accuracy and stability. Exact
+inputs, formulas, integrity checks, and consequences live in SDD 0009.
+
+Because every method consumes the same sealed reviewer attempts and static aggregation
+makes no model call, Task 6D token ratio is structurally exactly 1.0. The 1.2x condition is
+an integrity ceiling against hidden calls, not an empirical cost-advantage claim.
+
+The benchmark is deliberately narrow: it can establish a useful patch-review aggregation
+signal, not project understanding, patch generation, adoption, or production safety. Raw
+benchmark and reviewer material stays outside Git. Missing compliant candidate, reviewer,
+token, or harness registries leave the gate blocked and cannot be replaced with simulated
+claims. A pass permits only a new minimal-product plan; it does not retroactively pass
+Task 6C, admit a component, or unlock the old cascade.
+
 HaluEval remains the first planned fresh-inference external dataset because its upstream
 repository is public, MIT licensed, human annotated, and directly supports hallucination
 recognition. The MVP uses the QA, dialogue, and summarization tasks. `general` is reserved
@@ -495,7 +525,27 @@ for this core and panel. The result blocks new statistical components, the adapt
 cascade, UI, repository ingestion, LLM adapters, quality scoring, and reporting. It is
 static answer-comparison failure evidence, not project, patch, or adoption validation.
 
-### 9.4 Locked HaluEval outcome
+### 9.4 Daily Use Gate outcome
+
+Task 6D returns one of four states:
+
+- `PASS`: every accuracy, paired-confidence, token, perturbation-stability, coverage,
+  false-safe, integrity, and replay condition in SDD 0009 passes against both votes;
+- `FAIL`: a point threshold, token ceiling, coverage floor, or safety guardrail fails;
+- `INCONCLUSIVE`: point improvements are favorable but confidence does not exclude zero,
+  or the registered data cannot demonstrate a stability lead;
+- `INVALID`: a frozen-byte, blindness, provenance, schema, finite-value, or deterministic
+  replay requirement fails after the formal attempt starts.
+
+No result exists at protocol-registration time. The official experiments metadata pin
+does not contain a usable predictions file, and no compliant 500-patch candidate or
+three-reviewer ledger is frozen. This is `BLOCKED`, not an attempt. Once all prerequisites
+are sealed, the judge runs only once. A pre-oracle byte-transfer failure may be repaired
+only without changing sealed semantics. Opening the oracle consumes the attempt: later
+`INVALID`, `FAIL`, and `INCONCLUSIVE` results cannot rerun the same
+candidate/panel/ledger/holdout combination and all three keep product expansion blocked.
+
+### 9.5 Locked HaluEval outcome
 
 The locked HaluEval test returns one of three outcomes:
 

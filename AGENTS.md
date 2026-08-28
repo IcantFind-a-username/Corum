@@ -96,6 +96,17 @@ votes without relying on excess `DEFER`. Task 6C adds no statistical component a
 unlock Task 7. A pass authorizes only a minimal offline evaluator and a fresh real
 developer-project/patch value gate; all broader product surfaces remain blocked.
 
+Task 6C then returned a final `FAIL`. On 2026-08-29 the owner approved one distinct,
+prospective Task 6D Daily Use Gate under `docs/sdd/0009-daily-use-gate.md`. It freezes the
+failed core and asks whether its full-coverage no-pair readout can beat both ordinary and
+reliability-weighted voting on 500 real, executable-oracle patch judgments using the same
+three cached LLM reviews. Passing requires at least `+5` percentage points accuracy, no
+more than `1.20x` tokens, at least `30%` fewer harmless-perturbation flips, at least `90%`
+coverage, no worse false-safe incidence, and positive paired confidence evidence for the
+accuracy and stability improvements. This owner exception permits only the minimum blind
+registry and independent judge. It does not repair Task 6C, admit a new component, unlock
+Task 7, or authorize product work before a formal `PASS`.
+
 ## 4. Architecture and ownership
 
 The statistical core is a small typed Python library. Network access, dataset download,
@@ -252,6 +263,7 @@ fresh verification and independent review with no open Critical or Important fin
 | 6A | Locked core-vs-majority value gate | `CORE_VALUE_GATE_FAILED`; pivot returned to owner |
 | 6B | Pair-block joint-likelihood pivot and fresh value gate | `PAIR_BLOCK_ADMISSION_FAILED`; Gate A failed, Gate B passed |
 | 6C | JudgeBench external vote value gate for the unchanged legacy core | `FAIL`; attempt 0 final, expansion stopped |
+| 6D | Real-patch Daily Use Gate against voting | Protocol registered; pre-acquisition evidence blocked |
 | 7 | Leakage-free adaptive cascade | Pending; blocked on both Task 6B gates |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
 | 9 | HaluEval adapter and zero-cost Kaggle notebook | Pending |
@@ -287,6 +299,27 @@ guardrails correctly rejected the apparently favorable loss. This attempt is fin
 the frozen core and panel: no same-data repair or threshold change is permitted, Corum
 has not proved a practically usable advantage over voting, and all component and product
 expansion remains blocked.
+
+### Task 6D prospective Daily Use Gate
+
+The owner did not authorize a Task 6C repair. Task 6D is a fresh, falsifiable investment
+decision on exactly 500 SWE-bench Verified patch judgments. Freeze `src/corum`, every old
+judge and result, the rejected pair registry, the Task 6C panel, and the old Task 7 entry
+condition. Only the four documentation files registered in SDD 0009 may change before the
+documentation milestone. The later judge milestone may add only
+`configs/daily-use-v1.json` and `tests/test_daily_use_value.py` through RED-GREEN-refactor
+TDD and independent review; the post-acquisition seal may add only
+`configs/daily-use-v1-seal.json`. Do not start the judge milestone with placeholder
+models, candidate hashes, prompts, contexts, clearances, or image/runtime pins.
+
+Do not acquire reviewer outputs or inspect candidate harness outcomes until the
+outcomes-free 500-patch registry, exact three-model panel, prompts, context packages,
+token accounting, perturbation, hashes, and privacy/provenance boundary are frozen. No
+paid API call is authorized. A missing compliant external registry is `BLOCKED`, not a
+reason to run a partial gate, use synthetic evidence, lower the sample size, or begin UI,
+repository ingestion, adapters, scoring, or cascade work. A formal `PASS` permits only a
+new owner-reviewed minimal-product plan; `FAIL` or `INCONCLUSIVE` stops the current
+consensus path.
 
 ## 7. Mandatory development workflow
 

@@ -947,12 +947,98 @@ blocked.
 
 ---
 
+## Task 6D: Real-patch Daily Use Gate
+
+**Entry condition:** Task 6C remains a final `FAIL`. The owner has approved a distinct,
+prospective investment test under `docs/sdd/0009-daily-use-gate.md`, not a repair of any
+old result. The accepted-base statistical core, rejected pair component, Task 6C judge,
+and Task 7 entry condition remain frozen.
+
+**Documentation files:**
+
+- Modify: `AGENTS.md`
+- Modify: `docs/specs/corum-mvp-design.md`
+- Modify: `docs/plans/corum-mvp.md`
+- Create: `docs/sdd/0009-daily-use-gate.md`
+
+**Frozen judge files:**
+
+- Create: `configs/daily-use-v1.json`
+- Create: `tests/test_daily_use_value.py`
+- Create after reviewer acquisition: `configs/daily-use-v1-seal.json`
+
+**Attempt-0 result files:**
+
+- Create: `docs/results/task-6d-daily-use-attempt-0.json`
+- Create: `docs/results/task-6d-daily-use-attempt-0.md`
+- Create: `docs/results/task-6d-daily-use-attempt-0.txt`
+- Modify only registered status/result prose in the four documentation files above
+
+**Step 1: Register and review the simple investment gate**
+
+Freeze the 500-task SWE-bench Verified manifest, outcomes-free candidate contract, exact
+three-reviewer limit, blind prompt/context boundary, equivalent perturbation, unchanged
+no-pair Corum readout, ordinary and reliability-weighted votes, token ledger, metrics,
+paired bootstrap, integrity checks, and one-run stop rule. Preserve every earlier failure.
+Obtain independent read-only review, fix all Critical and Important findings, and commit
+exactly `docs: register daily use value gate`.
+
+**Step 2: Satisfy pre-acquisition prerequisites**
+
+Freeze either a newly generated outcome-isolated 500-patch set or a complete public
+candidate inventory with deterministic selection. Freeze the complete eligible endpoint
+inventory and mechanical three-distinct-lineage model selection, exact prompt/retrieval
+and 1,000 context packages, privacy/provenance clearances, container digests, and a
+successful 500-case gold-patch environment check. Until every item exists, keep Task 6D
+`BLOCKED`; do not write a placeholder config, acquire reviewer output, call a paid API,
+reduce the sample, substitute simulation, or start product work.
+
+**Step 3: Lock the minimum independent judge through TDD**
+
+Write synthetic RED tests first. Add only the JSON registry and self-contained judge.
+Ordinary tests must validate schemas, blind joining, cross-repository fitting, both voting
+baselines, full-coverage Corum readout, token accounting, perturbation flips, false-safe
+incidence, repository-stratified paired bootstrap, verdict precedence, aggregate-only output, and
+deterministic replay. The external path stays skipped unless
+`CORUM_RUN_DAILY_USE_V1=1`. Do not modify `src/corum` or acquire real reviewer votes.
+Verify at least 80% branch coverage for new helpers, the ordinary suite excluding only the
+already-consumed failing Task 6A/6B judges, Ruff, mypy, and `git diff --check`; obtain fresh
+independent review and commit exactly
+`test: lock daily use value gate` without executing the formal gate.
+
+**Step 4: Acquire and seal reviews before the oracle exists**
+
+Acquire exactly 3,000 final reviewer records under the locked panel and packages. A
+recorded timeout/refusal/invalid schema is a model outcome; a missing ledger row or hidden
+call is an integrity failure. Count every bounded retry token. Reviewers must never receive
+oracle material. Raw material and secrets remain under ignored local storage. Independently
+review the acquisition audit, then commit only its hashes and token total in
+`configs/daily-use-v1-seal.json` exactly as
+`data: seal daily use reviewer ledger`. Do not generate or open candidate harness outcomes
+until the seal commit and its review are complete.
+
+**Step 5: Generate the oracle once, execute once, and obey the result**
+
+Run every candidate once in the pinned harness, then run the locked external judge once.
+Preserve exact aggregate output and wall time, and
+commit only the registered result files plus status prose as
+`docs: record daily use gate result`. `PASS` requires at least `+5pp` accuracy against
+each vote with paired confidence above zero, shared token ratio exactly `1.0` (and thus at
+most `1.20`), at least `30%`
+fewer perturbation flips with paired confidence above zero, coverage at least `90%`, and
+no worse false-safe incidence. A pass permits only an owner-reviewed plan for a minimal
+human-input/BYO-LLM product pilot; it cannot admit a component or unlock the old Task 7.
+`FAIL` or `INCONCLUSIVE` stops the current consensus path. A post-oracle `INVALID`
+consumes the attempt and cannot rerun this candidate/panel/ledger/holdout combination.
+
+---
+
 ## Task 7: Leakage-free adaptive cascade
 
 **Entry condition:** both locked Task 6B gates pass. The favorable portions of the failed
 Task 6A run, Task 6B Gate B, Task 6C, and a green unit suite are insufficient. Task 6C
-cannot satisfy this entry condition; the cascade remains dormant unless a future owner-
-approved prospective roadmap replaces it.
+and Task 6D cannot satisfy this entry condition; the cascade remains dormant unless a
+future owner-approved prospective roadmap replaces it.
 
 **Files:**
 
