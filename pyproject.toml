@@ -7,6 +7,9 @@ name = "corum"
 version = "0.1.0"
 description = "Evidence-aware, dependence-aware consensus among imperfect reviewers"
 requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+]
 
 [dependency-groups]
 test = [
