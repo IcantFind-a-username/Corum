@@ -64,7 +64,10 @@ The MVP must:
 8. Compare against strong, leakage-free baselines.
 9. Simulate an adaptive cascade and report reviewer-call and token-cost savings.
 10. Generate machine-readable results and a human-readable Markdown evaluation report.
-11. Provide a public-data adapter and a reproducible Kaggle notebook path for HaluEval.
+11. Before new components, replay the unchanged static core on cached external
+    JudgeBench votes against ordinary and lineage-balanced majority.
+12. Provide a public-data adapter and a reproducible Kaggle notebook path for HaluEval
+    only after the applicable zero-cost gates permit that work.
 
 ## 4. Non-goals
 
@@ -281,10 +284,26 @@ adversarial reviewer can shift independently without an implicit scalar drift kn
 
 ### 8.2 Public-data validation
 
-HaluEval is the first external dataset because its upstream repository is public, MIT
-licensed, human annotated, and directly supports hallucination recognition. The MVP uses
-the QA, dialogue, and summarization tasks. `general` is reserved as a later OOD check
-because its construction and label distribution differ.
+JudgeBench is the first zero-inference-cost external capability gate because its official
+repository already contains static paired judgments from multiple model lineages. Task 6C
+uses only the GPT-4o response subset and every non-OpenAI Arena-Hard judge at the pinned
+revision: seven outputs across three declared lineages. Raw bytes are
+pinned and checksum-verified locally; no raw or normalized judge output is redistributed
+because the pinned GitHub revision does not clearly license its `outputs/` directory.
+The full panel, split, normalization, baselines, anti-DEFER rules, thresholds, and stop
+conditions are frozen in `docs/sdd/0008-judgebench-external-vote-gate.md` before any
+held-out performance is calculated.
+
+JudgeBench tests whether the current static core can add decision value over voting on
+real cached reviewer errors. It does not test repository patches, safe project reading,
+fresh inference, or developer adoption. A pass permits only a minimal offline evaluator
+and a separate real developer-project/patch gate; it does not admit the failed pair path
+or unlock the cascade.
+
+HaluEval remains the first planned fresh-inference external dataset because its upstream
+repository is public, MIT licensed, human annotated, and directly supports hallucination
+recognition. The MVP uses the QA, dialogue, and summarization tasks. `general` is reserved
+as a later OOD check because its construction and label distribution differ.
 
 Raw HaluEval data is downloaded from its official upstream release and is not committed.
 The downloader records URL, upstream revision, SHA-256, license, and retrieval date. A
@@ -436,7 +455,29 @@ was consumed. Result artifacts are in `docs/results/task-6b-pair-block-attempt-0
 `docs/results/task-6b-pair-block-attempt-0.txt`. These are synthetic results, not proof of
 real-project effectiveness.
 
-### 9.3 Locked HaluEval outcome
+### 9.3 JudgeBench external vote value gate
+
+Task 6C freezes the rejected pair component and evaluates the unchanged no-pair power
+core on 350 JudgeBench GPT-4o response comparisons. Seven static Arena-Hard judges form a
+three-lineage panel: two Anthropic Claude 3 judges, two Google Gemini 1.5 judges, and three
+Meta Llama 3.1 judges. The 42 LiveCodeBench cases are an untouched coding slice; 308 other
+cases are deterministically divided into 128 calibration-fit, 68 policy-selection, and
+112 general-test cases by source and label. The locked pooled test contains 154 cases.
+
+Corum must materially beat both ordinary seven-reviewer majority and a fixed
+lineage-balanced three-vote majority with identical inputs and symmetric loss. Passing
+requires at least 10% lower decision loss than ordinary majority, at least 5% lower loss
+than lineage-balanced majority, a positive paired 95% benefit interval against each,
+registered coverage and useful-resolution floors, bounded directional errors, and no
+coding-slice harm beyond one case-equivalent. Integrity failure returns `INVALID`; point
+harm or a utility guardrail breach returns `FAIL`; favorable but insufficient or uncertain
+benefit returns `INCONCLUSIVE`. Exact literals and stop rules live only in SDD 0008.
+
+No same-data repair is allowed after the one frozen run. A pass is external static
+answer-comparison evidence, not proof of project understanding, patch correctness,
+developer adoption, production readiness, or universal superiority.
+
+### 9.4 Locked HaluEval outcome
 
 The locked HaluEval test returns one of three outcomes:
 

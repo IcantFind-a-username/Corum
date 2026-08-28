@@ -858,10 +858,90 @@ component is unadmitted and Task 7 remains blocked. Preserve the exact artifacts
 
 ---
 
+## Task 6C: JudgeBench external vote value gate
+
+**Entry condition:** Task 6A and Task 6B remain permanently failed under their original
+judges. The owner has approved an external comparison of the unchanged legacy no-pair
+core in `docs/sdd/0008-judgebench-external-vote-gate.md`. This task cannot repair either
+failed mechanism or unlock Task 7.
+
+**Documentation files:**
+
+- Modify: `AGENTS.md`
+- Modify: `docs/specs/corum-mvp-design.md`
+- Modify: `docs/plans/corum-mvp.md`
+- Create: `docs/sdd/0008-judgebench-external-vote-gate.md`
+
+**Frozen judge files:**
+
+- Create: `configs/judgebench-v1.json`
+- Create: `tests/test_judgebench_value.py`
+
+**Attempt-0 result files:**
+
+- Create: `docs/results/task-6c-judgebench-attempt-0.json`
+- Create: `docs/results/task-6c-judgebench-attempt-0.md`
+- Create: `docs/results/task-6c-judgebench-attempt-0.txt`
+- Modify only the status/result prose in the four documentation files above
+
+**Step 1: Freeze and review the prospective documentation**
+
+Record the exact upstream revision, eight file hashes, outcome-blind seven-reviewer panel,
+three lineages,
+order-reversal normalization, split digest, symmetric costs, unchanged core literals,
+two voting baselines, anti-DEFER criteria, source-stratified bootstrap, verdict, and stop
+rule. Do not calculate any held-out outcome. Obtain independent read-only review, resolve
+every Critical or Important finding, and commit exactly
+`docs: register JudgeBench external value gate`.
+
+**Step 2: Lock the independent judge without running it**
+
+Add a checked-in JSON registry and a self-contained external-data judge. The ordinary
+suite skips it unless `CORUM_RUN_JUDGEBENCH_V1=1`. Synthetic parser/reference tests may
+exercise structural code but must not read upstream held-out values. The formal judge
+independently verifies the pinned Git tree and complete 11-candidate inventory, raw hashes,
+output alignment, order normalization, exact split, empty pair registry, baseline
+decisions, per-case losses, bootstrap inputs, and verdict logic. It must never write or
+commit raw or normalized vote rows.
+
+Run static checks only, obtain independent review without executing the formal test, fix
+and re-review all findings, then commit exactly
+`test: lock JudgeBench external value gate`. Do not modify `src/corum`.
+
+**Step 3: Execute the frozen judge once**
+
+Materialize the eight pinned blobs only under `.corum-work/judgebench-v1/raw/`, set the
+explicit run switch and raw-directory environment variable, and run only:
+
+```powershell
+$env:CORUM_RUN_JUDGEBENCH_V1 = "1"
+$env:CORUM_JUDGEBENCH_RAW_DIR = ".corum-work/judgebench-v1/raw"
+$env:CORUM_JUDGEBENCH_UPSTREAM_REPO = ".corum-work/judgebench-v1/upstream"
+.venv\Scripts\uv.exe run pytest tests/test_judgebench_value.py -q -s
+```
+
+Capture the exact output and wall time. Preserve the aggregate result, not the upstream
+rows, under `docs/results/`. `PASS` authorizes only a minimal offline evaluator and a
+fresh real developer-project/patch value gate. `FAIL` or `INCONCLUSIVE` stops component
+and product expansion. `INVALID` requires a prospectively versioned judge fix before any
+scientific claim. No same-data core tuning or threshold change is permitted.
+
+**Step 4: Record and verify honestly**
+
+Update only registered result/status prose, commit result artifacts, and run the ordinary
+repository suite, Ruff, mypy, and `git diff --check`. Retain the Task 6A/6B failures and
+state that JudgeBench is static answer-comparison evidence rather than project, patch, or
+adoption validation. Commit exactly `docs: record JudgeBench external gate result` after
+the artifacts and verification evidence are complete.
+
+---
+
 ## Task 7: Leakage-free adaptive cascade
 
 **Entry condition:** both locked Task 6B gates pass. The favorable portions of the failed
-Task 6A run and a green unit suite are insufficient.
+Task 6A run, Task 6B Gate B, Task 6C, and a green unit suite are insufficient. Task 6C
+cannot satisfy this entry condition; the cascade remains dormant unless a future owner-
+approved prospective roadmap replaces it.
 
 **Files:**
 

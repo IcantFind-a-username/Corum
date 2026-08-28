@@ -84,12 +84,17 @@ success would have permitted external validation, not proved real-world usefulne
 
 The first Task 6A judge remained failed after one general shrinkage repair: Corum beat
 ordinary majority on pooled decision loss, but the power-likelihood dependence heuristic
-missed its registered `majority_trap` probability-improvement threshold. The owner chose
-a prospective core pivot on 2026-08-28. Task 6B may therefore add only the pre-registered
-pair-block likelihood path in `docs/sdd/0007-pair-block-consensus-pivot.md`; it must retain
-the old failed result and beat naive independence, the frozen power heuristic, and
-ordinary majority on a fresh locked evaluation. Task 7 and product surfaces remain
-blocked until both Task 6B gates pass.
+missed its registered `majority_trap` probability-improvement threshold. The prospective
+Task 6B pair-block pivot then beat majority on decision loss but failed its component
+admission gate against the frozen power heuristic and its independent negative control.
+The pair component is rejected and the old failures remain immutable.
+
+On 2026-08-29 the owner approved Task 6C, a zero-inference-cost external replay of the
+unchanged legacy power core under `docs/sdd/0008-judgebench-external-vote-gate.md`. It must
+beat both ordinary majority and lineage-balanced majority on the same cached JudgeBench
+votes without relying on excess `DEFER`. Task 6C adds no statistical component and cannot
+unlock Task 7. A pass authorizes only a minimal offline evaluator and a fresh real
+developer-project/patch value gate; all broader product surfaces remain blocked.
 
 ## 4. Architecture and ownership
 
@@ -246,6 +251,7 @@ fresh verification and independent review with no open Critical or Important fin
 | 6 | Baselines, metrics, and paired uncertainty | Complete (`6eba742`) |
 | 6A | Locked core-vs-majority value gate | `CORE_VALUE_GATE_FAILED`; pivot returned to owner |
 | 6B | Pair-block joint-likelihood pivot and fresh value gate | `PAIR_BLOCK_ADMISSION_FAILED`; Gate A failed, Gate B passed |
+| 6C | JudgeBench external vote value gate for the unchanged legacy core | Approved; judge not yet executed |
 | 7 | Leakage-free adaptive cascade | Pending; blocked on both Task 6B gates |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
 | 9 | HaluEval adapter and zero-cost Kaggle notebook | Pending |
@@ -256,7 +262,7 @@ fresh verification and independent review with no open Critical or Important fin
 The coordinator may update this checkpoint in a repository-level documentation commit.
 Task implementers must not expand their allowed-file list solely to edit status prose.
 
-### Task 6B result and handoff
+### Task 6B result and Task 6C handoff
 
 Attempt 0 ran once on `14c363d` under the owner-approved prospective pivot in
 `docs/sdd/0007-pair-block-consensus-pivot.md`. Gate A failed and Gate B passed, so the
@@ -265,8 +271,12 @@ and captured pytest output are retained under `docs/results/`. Three independent
 postmortems found no implementation defect within the registered equations; no bounded
 repair was consumed. Any future hierarchical shrinkage, independence adaptation, or model
 averaging candidate requires a new prospective SDD, fresh seeds, and a new judge version.
-Keep cascade, UI, repository ingestion, LLM adapters, and reporting blocked until the owner
-approves that pivot or stops the statistical-core track.
+
+The owner instead approved the external, unchanged-core Task 6C gate. Freeze the rejected
+pair component and do not repair or tune the legacy core on JudgeBench. Keep the cascade,
+UI, repository ingestion, LLM adapters, quality scoring, and reporting blocked during
+Task 6C. A Task 6C pass may unlock only the narrowly scoped next steps named in SDD 0008;
+failure or inconclusive evidence stops component expansion.
 
 ## 7. Mandatory development workflow
 
@@ -354,6 +364,9 @@ of current completion.
 - Experiment writes are atomic; interrupted output cannot claim `complete`.
 - Raw public datasets are downloaded from pinned official revisions, checksum-verified,
   attributed, and never committed unless a tiny fixture is explicitly license-safe.
+- JudgeBench attempt 0 uses only the eight files and hashes registered in SDD 0008. Its raw
+  and normalized judge outputs remain local because the pinned GitHub revision does not
+  clearly license the `outputs/` directory; only aggregate metrics may be committed.
 - HaluEval source records, not answer variants, are the split unit.
 - Raw locked-test reviewer votes are cached before test analysis.
 - Do not collect hidden chain-of-thought. Store only concise structured votes and declared
