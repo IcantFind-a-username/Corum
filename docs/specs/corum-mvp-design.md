@@ -613,11 +613,7 @@ blocked.
 
 ### 9.5 Prospective convergence/resolution gate
 
-Task 6E has no formal result at this checkpoint. Its judge and config do not yet exist,
-and the documentation milestone must not create placeholders. After independent review,
-a separate TDD milestone may create only `configs/convergence-resolution-v1.json` and
-`tests/test_convergence_resolution_value.py`; the external path remains skipped unless
-`CORUM_RUN_CONVERGENCE_V1=1`.
+Task 6E attempt 0 is final: `FAIL` with reason codes `FAIL_ACCURACY_POINT_WEIGHTED`, `FAIL_COVERAGE_FLOOR`, `FAIL_COVERAGE_GAP_WEIGHTED`, `FAIL_DISPERSION_POINT_ORDINARY`, `FAIL_DISPERSION_POINT_WEIGHTED`, `FAIL_SCENARIO_ACCURACY`, `FAIL_SCENARIO_COVERAGE`, `FAIL_SCENARIO_FALSE_SAFE`. Artifacts: `docs/results/task-6e-convergence-resolution-attempt-0.txt`, `docs/results/task-6e-convergence-resolution-attempt-0.json`, and `docs/results/task-6e-convergence-resolution-attempt-0.md`. The current consensus path is stopped; another synthetic candidate, Task 7, product work, and model calls remain unauthorized pending an owner decision.
 
 All retryable static validation occurs before the judge durably creates the registered TXT
 attempt ledger's `START`; preflight never simulates a formal block. `START` is fsynced

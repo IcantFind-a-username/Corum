@@ -283,7 +283,7 @@ fresh verification and independent review with no open Critical or Important fin
 | 6B | Pair-block joint-likelihood pivot and fresh value gate | `PAIR_BLOCK_ADMISSION_FAILED`; Gate A failed, Gate B passed |
 | 6C | JudgeBench external vote value gate for the unchanged legacy core | `FAIL`; attempt 0 final, expansion stopped |
 | 6D | Real-patch Daily Use Gate against voting | Panel smoke formally `BLOCKED`; formal attempt unconsumed |
-| 6E | Prospective full-coverage convergence/resolution gate | Prospective documentation registered; synthetic judge not yet implemented or run |
+| 6E | Full-coverage convergence/resolution gate | Attempt 0 `FAIL`; reasons: FAIL_ACCURACY_POINT_WEIGHTED, FAIL_COVERAGE_FLOOR, FAIL_COVERAGE_GAP_WEIGHTED, FAIL_DISPERSION_POINT_ORDINARY, FAIL_DISPERSION_POINT_WEIGHTED, FAIL_SCENARIO_ACCURACY, FAIL_SCENARIO_COVERAGE, FAIL_SCENARIO_FALSE_SAFE |
 | 7 | Leakage-free adaptive cascade | Pending; blocked on both Task 6B gates |
 | 8 | End-to-end runner, CLI, and report renderer | Pending |
 | 9 | HaluEval adapter and zero-cost Kaggle notebook | Pending |
@@ -378,9 +378,9 @@ equality, zero model calls, and complete deterministic integrity. This synthetic
 is not same-case response or prompt-order stability evidence and cannot satisfy Task 6D's
 real stability or token conditions.
 
-The documentation milestone may change only the four files registered in SDD 0010. A
-later reviewed TDD milestone may add only `configs/convergence-resolution-v1.json` and
-`tests/test_convergence_resolution_value.py`; no config or judge exists yet. Formal
+The documentation milestone changed only the four files registered in SDD 0010. The
+reviewed judge milestone then added only `configs/convergence-resolution-v1.json` and
+`tests/test_convergence_resolution_value.py` before attempt 0. Formal
 execution is one-shot. Static preflight never generates a formal block. The judge writes
 only the registered TXT `START`/`FINAL` ledger; FINAL embeds the complete deterministic
 result. After termination the recorder is the sole publisher of JSON/MD/status, including
@@ -395,6 +395,10 @@ post-`START` crash, partial run, or integrity failure consumes the attempt. `PAS
 only a new acquisition SDD/version and independent review; every other consumed verdict
 forbids another synthetic candidate on the current consensus path and returns the
 continue/stop decision to the owner.
+
+### Task 6E attempt-0 recorded result
+
+Task 6E attempt 0 is final: `FAIL` with reason codes `FAIL_ACCURACY_POINT_WEIGHTED`, `FAIL_COVERAGE_FLOOR`, `FAIL_COVERAGE_GAP_WEIGHTED`, `FAIL_DISPERSION_POINT_ORDINARY`, `FAIL_DISPERSION_POINT_WEIGHTED`, `FAIL_SCENARIO_ACCURACY`, `FAIL_SCENARIO_COVERAGE`, `FAIL_SCENARIO_FALSE_SAFE`. Artifacts: `docs/results/task-6e-convergence-resolution-attempt-0.txt`, `docs/results/task-6e-convergence-resolution-attempt-0.json`, and `docs/results/task-6e-convergence-resolution-attempt-0.md`. The current consensus path is stopped; another synthetic candidate, Task 7, product work, and model calls remain unauthorized pending an owner decision.
 
 ## 7. Mandatory development workflow
 

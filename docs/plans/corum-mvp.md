@@ -1061,8 +1061,8 @@ accepted-base core, admit a component, or satisfy Task 7's entry condition.
 
 **Frozen judge files:**
 
-- Create later: `configs/convergence-resolution-v1.json`
-- Create later: `tests/test_convergence_resolution_value.py`
+- Created in the reviewed judge milestone: `configs/convergence-resolution-v1.json`
+- Created in the reviewed judge milestone: `tests/test_convergence_resolution_value.py`
 
 **Attempt-0 result files:**
 
@@ -1161,6 +1161,8 @@ only those registered artifacts and status prose exactly as
 `docs: record convergence resolution gate result`. TDD injects publication faults after
 JSON, Markdown, every status-document update, and around commit, and proves exact-byte
 reuse, mismatch refusal, and convergence to one result commit.
+
+**Recorded attempt-0 outcome:** Task 6E attempt 0 is final: `FAIL` with reason codes `FAIL_ACCURACY_POINT_WEIGHTED`, `FAIL_COVERAGE_FLOOR`, `FAIL_COVERAGE_GAP_WEIGHTED`, `FAIL_DISPERSION_POINT_ORDINARY`, `FAIL_DISPERSION_POINT_WEIGHTED`, `FAIL_SCENARIO_ACCURACY`, `FAIL_SCENARIO_COVERAGE`, `FAIL_SCENARIO_FALSE_SAFE`. Artifacts: `docs/results/task-6e-convergence-resolution-attempt-0.txt`, `docs/results/task-6e-convergence-resolution-attempt-0.json`, and `docs/results/task-6e-convergence-resolution-attempt-0.md`. The current consensus path is stopped; another synthetic candidate, Task 7, product work, and model calls remain unauthorized pending an owner decision.
 
 ---
 

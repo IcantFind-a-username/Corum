@@ -1,6 +1,6 @@
 # SDD: Prospective Full-Coverage Convergence/Resolution Gate
 
-- Status: prospective documentation registered; judge and formal attempt not started
+- Status: attempt 0 final — `FAIL`; reason codes: FAIL_ACCURACY_POINT_WEIGHTED, FAIL_COVERAGE_FLOOR, FAIL_COVERAGE_GAP_WEIGHTED, FAIL_DISPERSION_POINT_ORDINARY, FAIL_DISPERSION_POINT_WEIGHTED, FAIL_SCENARIO_ACCURACY, FAIL_SCENARIO_COVERAGE, FAIL_SCENARIO_FALSE_SAFE
 - Accepted base: `b34e089`
 - Exact documentation commit: `docs: register convergence resolution gate`
 - Exact judge commit: `test: lock convergence resolution gate`
@@ -684,6 +684,10 @@ Deterministic replay rebuilds operands, aggregates, intervals, result, and verdi
 from one in-memory formal run; it never resimulates. The judge places the result only in
 FINAL. The recorder is sole creator of registered JSON/MD/status and never recomputes
 science or reinterprets a valid FINAL.
+
+## Attempt-0 recorded result
+
+Task 6E attempt 0 is final: `FAIL` with reason codes `FAIL_ACCURACY_POINT_WEIGHTED`, `FAIL_COVERAGE_FLOOR`, `FAIL_COVERAGE_GAP_WEIGHTED`, `FAIL_DISPERSION_POINT_ORDINARY`, `FAIL_DISPERSION_POINT_WEIGHTED`, `FAIL_SCENARIO_ACCURACY`, `FAIL_SCENARIO_COVERAGE`, `FAIL_SCENARIO_FALSE_SAFE`. Artifacts: `docs/results/task-6e-convergence-resolution-attempt-0.txt`, `docs/results/task-6e-convergence-resolution-attempt-0.json`, and `docs/results/task-6e-convergence-resolution-attempt-0.md`. The current consensus path is stopped; another synthetic candidate, Task 7, product work, and model calls remain unauthorized pending an owner decision.
 
 ## Synthetic verdict
 
